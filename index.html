@@ -28,14 +28,14 @@ const jsPsych = initJsPsych({
 // Setup variables
 const timeline = [];
 const secret_code = jsPsych.randomization.randomID(8);
-const filename = `fpo_uk_general_${secret_code}.csv`; // CHANGE THIS BETWEEN VERSIONS
+const filename = `fpo_mixed_general_${secret_code}.csv`; // CHANGE THIS BETWEEN VERSIONS
 const urlvar = jsPsych.data.urlVariables();
 
 // Save data configuration
 const save_data = {
     type: jsPsychPipe,
     action: "save",
-    experiment_id: "XI3ZrLtSbuoP", // CHANGE THIS
+    experiment_id: "aKv0bBfHyWLW", // CHANGE THIS
     filename: filename,
     data_string: () => jsPsych.data.get().csv()
 };
@@ -114,7 +114,7 @@ timeline.push(consent);
 var instructions = {
   type: jsPsychHtmlButtonResponse,
   stimulus: "<p>In each trial of this task, you will see three images: one target item on top, and two choices beneath the target item." +
-    "</p><p>For each trial, <strong>please select the item that is most similar to the target item USING ANY CRITERIA.</strong>"+
+    "</p><p>For each trial, <strong>please select the item that is most similar to the target item using any criteria.</strong>"+
     "<p>There will be 620 trials.</p>"+
       "<p>Click 'Continue' to begin the test.</p>",
     choices: ["Continue"],
@@ -626,12 +626,12 @@ timeline.push(save_data);
       stimulus: function(){
         output = "Woohoo! You have finished the experiment. <br>";
           if(urlvar.workerId.length > 7){
-              output = output + "<strong> Here is your secret code: C119H2OR </strong><br>"; // CHANGE THIS
+              output = output + "<strong> Here is your secret code: CEDRDUBU </strong><br>"; // CHANGE THIS
           }
         output = output + "Click the button below to complete the experiment. Goodbye!<br><br>";
       return output;
       },
-      choices: ["<a href='https://app.prolific.com/submissions/complete?cc=C119H2OR'>Complete Experiment</a>"]    // CHANGE THIS  
+      choices: ["<a href='https://app.prolific.com/submissions/complete?cc=CEDRDUBU'>Complete Experiment</a>"]    // CHANGE THIS  
    };
     timeline.push(goodbye);
 
