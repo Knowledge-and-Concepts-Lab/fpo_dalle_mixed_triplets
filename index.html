@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Triadic Judgment Task</title>
+    <script src="https://unpkg.com/jspsych@7.3.4"></script>
+    <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" type="text/css" />
+    
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-button-response@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-fullscreen@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-multi-select@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe"></script>
+</head>
+<body></body>
+<script>
+// Initialize jsPsych
+const jsPsych = initJsPsych({
+    show_progress_bar: false,
+    on_data_update: function() {
+        jsPsych.data.addProperties({worker_id: urlvar.workerId});
+    },
+    max_load_time: 120000
+});
+
+// Setup variables
+const timeline = [];
+const secret_code = jsPsych.randomization.randomID(8);
+const filename = `fpo_uk_general_${secret_code}.csv`; // CHANGE THIS BETWEEN VERSIONS
+const urlvar = jsPsych.data.urlVariables();
+
+// Save data configuration
+const save_data = {
+    type: jsPsychPipe,
+    action: "save",
+    experiment_id: "XI3ZrLtSbuoP", // CHANGE THIS
+    filename: filename,
+    data_string: () => jsPsych.data.get().csv()
+};
+
+// Your image paths array
+const imagePaths = [
+    "stimuli/rural_day_new_big_church_1.png",
+    "stimuli/rural_day_new_small_house_1.png",
+    "stimuli/rural_day_old_big_church_1.png",
+    "stimuli/rural_day_old_black_man_1.png",
+    "stimuli/rural_day_old_small_house_1.png",
+    "stimuli/rural_day_old_white_woman_1.png",
+    "stimuli/rural_day_young_black_man_1.png",
+    "stimuli/rural_day_young_white_woman_1.png",
+    "stimuli/rural_eve_new_big_church_1.png",
+    "stimuli/rural_eve_new_small_house_1.png",
+    "stimuli/rural_eve_old_big_church_1.png",
+    "stimuli/rural_eve_old_black_man_1.png",
+    "stimuli/rural_eve_old_small_house_1.png",
+    "stimuli/rural_eve_old_white_woman_1.png",
+    "stimuli/rural_eve_young_black_man_1.png",
+    "stimuli/rural_eve_young_white_woman_1.png",
+    "stimuli/urban_day_new_big_house_1.png",
+    "stimuli/urban_day_new_small_church_1.png",
+    "stimuli/urban_day_old_big_house_1.png",
+    "stimuli/urban_day_old_black_woman_1.png",
+    "stimuli/urban_day_old_small_church_1.png",
+    "stimuli/urban_day_old_white_man_1.png",
+    "stimuli/urban_day_young_black_woman_1.png",
+    "stimuli/urban_day_young_white_man_1.png",
+    "stimuli/urban_eve_new_big_house_1.png",
+    "stimuli/urban_eve_new_small_church_1.png",
+    "stimuli/urban_eve_old_big_house_1.png",
+    "stimuli/urban_eve_old_black_woman_1.png",
+    "stimuli/urban_eve_old_small_church_1.png",
+    "stimuli/urban_eve_old_white_man_1.png",
+    "stimuli/urban_eve_young_black_woman_1.png",
+    "stimuli/urban_eve_young_white_man_1.png",
+    ];
+
+// Preload images
+const preload = {
+    type: jsPsychPreload,
+    auto_preload: true,
+    images: imagePaths,
+    show_progress_bar: true,
+    message: "Loading experiment files..."
+};
+timeline.push(preload);
+    
+    
+    
+// Welcome & consent!
+var welcome = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: "Welcome to the experiment. Press any key to begin."
+};
+timeline.push(welcome);
+
+
+timeline.push({
+  type: jsPsychFullscreen,
+  fullscreen_mode: true
+});    
+
+/* define consent trail */
+var consent = {
+    type: jsPsychImageButtonResponse,
+    stimulus: "kc_lab_consent_prolific.png",
+    choices: ["Consent & Continue"]
+};
+timeline.push(consent);    
+    
+    
+// Instructions
+var instructions = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: "<p>In each trial of this task, you will see three images: one target item on top, and two choices beneath the target item." +
+    "</p><p>For each trial, <strong>please select the item that is most similar to the target item USING ANY CRITERIA.</strong>"+
+    "<p>There will be 620 trials.</p>"+
+      "<p>Click 'Continue' to begin the test.</p>",
+    choices: ["Continue"],
+  post_trial_gap: 2000
+};
+timeline.push(instructions);      
+    
+
+// Utility functions
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+// Function to get unique random images
+function getUniqueRandomImages(n, excludeImages = []) {
+    const availableImages = imagePaths.filter(img => !excludeImages.includes(img));
+    if (availableImages.length < n) {
+        console.error('Not enough unique images available');
+        return null;
+    }
+    return jsPsych.randomization.sampleWithoutReplacement(availableImages, n);
+}
+
+// Function to generate a random trial
+function generateRandomTrial() {
+    // Get three different images
+    const selectedImages = getUniqueRandomImages(3);
+    return {
+        type: 'random',
+        stimulus: selectedImages[0],
+        choice1: selectedImages[1],
+        choice2: selectedImages[2]
+    };
+}
+
+// Function to generate a check trial
+function generateCheckTrial() {
+    // Get target and one other image
+    const target = jsPsych.randomization.sampleWithoutReplacement(imagePaths, 1)[0];
+    const otherChoice = getUniqueRandomImages(1, [target])[0];
+    
+    // Randomly determine position of the matching stimulus
+    const isFirstChoice = Math.random() < 0.5;
+    return {
+        type: 'check',
+        stimulus: target,
+        choice1: isFirstChoice ? target : otherChoice,
+        choice2: isFirstChoice ? otherChoice : target,
+        correct_choice: isFirstChoice ? 0 : 1
+    };
+}
+
+// Your predefined validation trials
+const validationTrials = [
+    {
+        type: 'validation',
+        stimulus: 'stimuli/rural_day_new_small_house_1.png',
+        choice1: 'stimuli/urban_day_new_big_house_1.png',
+        choice2: 'stimuli/rural_day_old_white_woman_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_eve_old_small_church_1.png',
+        choice1: 'stimuli/urban_eve_new_big_house_1.png',
+        choice2: 'stimuli/rural_day_old_small_house_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_eve_new_big_house_1.png',
+        choice1: 'stimuli/urban_eve_old_black_woman_1.png',
+        choice2: 'stimuli/urban_eve_new_small_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/rural_eve_old_small_house_1.png',
+        choice1: 'stimuli/urban_day_young_black_woman_1.png',
+        choice2: 'stimuli/urban_day_old_white_man_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/rural_eve_old_big_church_1.png',
+        choice1: 'stimuli/urban_eve_old_black_woman_1.png',
+        choice2: 'stimuli/urban_day_old_small_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_eve_young_black_woman_1.png',
+        choice1: 'stimuli/rural_day_new_small_house_1.png',
+        choice2: 'stimuli/rural_eve_old_big_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_young_white_man_1.png',
+        choice1: 'stimuli/urban_eve_young_white_man_1.png',
+        choice2: 'stimuli/urban_eve_old_small_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_eve_new_big_house_1.png',
+        choice1: 'stimuli/rural_day_young_white_woman_1.png',
+        choice2: 'stimuli/rural_day_new_big_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/rural_eve_young_black_man_1.png',
+        choice1: 'stimuli/rural_eve_old_white_woman_1.png',
+        choice2: 'stimuli/urban_eve_young_black_woman_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_eve_old_white_man_1.png',
+        choice1: 'stimuli/urban_eve_old_big_house_1.png',
+        choice2: 'stimuli/urban_day_old_small_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_old_small_church_1.png',
+        choice1: 'stimuli/urban_day_new_small_church_1.png',
+        choice2: 'stimuli/urban_day_young_black_woman_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_young_white_man_1.png',
+        choice1: 'stimuli/rural_day_new_small_house_1.png',
+        choice2: 'stimuli/urban_day_new_small_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/rural_day_old_white_woman_1.png',
+        choice1: 'stimuli/rural_day_new_small_house_1.png',
+        choice2: 'stimuli/urban_eve_new_small_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_eve_new_big_house_1.png',
+        choice1: 'stimuli/rural_day_old_white_woman_1.png',
+        choice2: 'stimuli/urban_eve_young_black_woman_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_young_white_man_1.png',
+        choice1: 'stimuli/urban_eve_new_small_church_1.png',
+        choice2: 'stimuli/rural_day_old_white_woman_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_old_white_man_1.png',
+        choice1: 'stimuli/rural_eve_old_big_church_1.png',
+        choice2: 'stimuli/urban_day_old_black_woman_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/rural_day_old_big_church_1.png',
+        choice1: 'stimuli/rural_eve_old_black_man_1.png',
+        choice2: 'stimuli/rural_eve_young_black_man_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_eve_new_big_house_1.png',
+        choice1: 'stimuli/urban_day_young_white_man_1.png',
+        choice2: 'stimuli/urban_eve_old_small_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_old_black_woman_1.png',
+        choice1: 'stimuli/urban_eve_old_big_house_1.png',
+        choice2: 'stimuli/urban_eve_new_big_house_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_new_big_house_1.png',
+        choice1: 'stimuli/rural_eve_old_big_church_1.png',
+        choice2: 'stimuli/urban_eve_new_big_house_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/rural_day_new_small_house_1.png',
+        choice1: 'stimuli/urban_day_young_white_man_1.png',
+        choice2: 'stimuli/rural_day_new_big_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_eve_old_white_man_1.png',
+        choice1: 'stimuli/rural_eve_old_black_man_1.png',
+        choice2: 'stimuli/urban_eve_young_white_man_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/rural_day_old_big_church_1.png',
+        choice1: 'stimuli/urban_eve_old_black_woman_1.png',
+        choice2: 'stimuli/urban_eve_old_small_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/rural_day_new_small_house_1.png',
+        choice1: 'stimuli/urban_eve_young_white_man_1.png',
+        choice2: 'stimuli/urban_day_young_white_man_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_eve_old_small_church_1.png',
+        choice1: 'stimuli/rural_eve_young_black_man_1.png',
+        choice2: 'stimuli/urban_eve_young_white_man_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_old_white_man_1.png',
+        choice1: 'stimuli/rural_day_young_white_woman_1.png',
+        choice2: 'stimuli/urban_day_new_big_house_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_eve_old_white_man_1.png',
+        choice1: 'stimuli/rural_day_young_black_man_1.png',
+        choice2: 'stimuli/urban_eve_new_big_house_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/rural_day_new_big_church_1.png',
+        choice1: 'stimuli/urban_day_old_small_church_1.png',
+        choice2: 'stimuli/rural_day_young_white_woman_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/rural_eve_old_big_church_1.png',
+        choice1: 'stimuli/rural_day_old_white_woman_1.png',
+        choice2: 'stimuli/urban_day_old_small_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_young_white_man_1.png',
+        choice1: 'stimuli/urban_eve_young_black_woman_1.png',
+        choice2: 'stimuli/urban_day_old_black_woman_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_eve_young_white_man_1.png',
+        choice1: 'stimuli/rural_day_new_small_house_1.png',
+        choice2: 'stimuli/urban_eve_old_small_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_new_big_house_1.png',
+        choice1: 'stimuli/urban_eve_old_big_house_1.png',
+        choice2: 'stimuli/rural_day_old_big_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_new_small_church_1.png',
+        choice1: 'stimuli/rural_eve_old_white_woman_1.png',
+        choice2: 'stimuli/rural_eve_young_black_man_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_old_white_man_1.png',
+        choice1: 'stimuli/urban_day_old_big_house_1.png',
+        choice2: 'stimuli/urban_day_old_black_woman_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/rural_eve_old_black_man_1.png',
+        choice1: 'stimuli/rural_eve_old_small_house_1.png',
+        choice2: 'stimuli/rural_day_new_small_house_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/rural_day_old_big_church_1.png',
+        choice1: 'stimuli/urban_day_old_small_church_1.png',
+        choice2: 'stimuli/urban_eve_new_big_house_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_eve_new_big_house_1.png',
+        choice1: 'stimuli/urban_day_old_big_house_1.png',
+        choice2: 'stimuli/rural_day_old_big_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/rural_day_old_big_church_1.png',
+        choice1: 'stimuli/urban_eve_new_small_church_1.png',
+        choice2: 'stimuli/rural_eve_old_big_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_young_white_man_1.png',
+        choice1: 'stimuli/rural_eve_young_black_man_1.png',
+        choice2: 'stimuli/rural_day_young_white_woman_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_young_white_man_1.png',
+        choice1: 'stimuli/rural_eve_old_big_church_1.png',
+        choice2: 'stimuli/rural_eve_old_black_man_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_eve_young_white_man_1.png',
+        choice1: 'stimuli/rural_day_old_black_man_1.png',
+        choice2: 'stimuli/urban_eve_old_small_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_young_white_man_1.png',
+        choice1: 'stimuli/rural_day_young_white_woman_1.png',
+        choice2: 'stimuli/rural_day_new_big_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/rural_day_young_black_man_1.png',
+        choice1: 'stimuli/rural_day_old_big_church_1.png',
+        choice2: 'stimuli/urban_eve_old_small_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_young_black_woman_1.png',
+        choice1: 'stimuli/rural_eve_old_black_man_1.png',
+        choice2: 'stimuli/rural_day_old_black_man_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_eve_new_small_church_1.png',
+        choice1: 'stimuli/urban_eve_young_white_man_1.png',
+        choice2: 'stimuli/rural_day_new_small_house_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_old_white_man_1.png',
+        choice1: 'stimuli/urban_eve_old_black_woman_1.png',
+        choice2: 'stimuli/rural_day_old_black_man_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/rural_day_young_black_man_1.png',
+        choice1: 'stimuli/urban_day_new_big_house_1.png',
+        choice2: 'stimuli/rural_eve_young_black_man_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_old_black_woman_1.png',
+        choice1: 'stimuli/rural_eve_old_white_woman_1.png',
+        choice2: 'stimuli/urban_eve_new_small_church_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_eve_old_black_woman_1.png',
+        choice1: 'stimuli/urban_eve_new_big_house_1.png',
+        choice2: 'stimuli/rural_day_new_small_house_1.png'
+    },
+    {
+        type: 'validation',
+        stimulus: 'stimuli/urban_day_new_small_church_1.png',
+        choice1: 'stimuli/rural_day_new_small_house_1.png',
+        choice2: 'stimuli/urban_day_old_white_man_1.png'
+    }
+];
+
+// Function to create a mixed trial sequence
+function createTrialSequence(numRandom, numCheck, numValidation) {
+    let trials = [];
+    
+    // Generate random trials
+    for (let i = 0; i < numRandom; i++) {
+        trials.push(generateRandomTrial());
+    }
+    
+    // Generate check trials
+    for (let i = 0; i < numCheck; i++) {
+        trials.push(generateCheckTrial());
+    }
+    
+    // Add validation trials
+    const selectedValidation = jsPsych.randomization.sampleWithoutReplacement(
+        validationTrials, 
+        numValidation
+    );
+    trials = trials.concat(selectedValidation);
+    
+    // Shuffle all trials
+    return shuffle(trials);
+}
+
+// Create trial
+const createTrial = {
+    type: jsPsychImageButtonResponse,
+    stimulus: jsPsych.timelineVariable('stimulus'),
+    choices: function() {
+        return [
+            jsPsych.timelineVariable('choice1'),
+            jsPsych.timelineVariable('choice2')
+        ];
+    },
+    button_html: '<button class="jspsych-btn"><img src=%choice%></button>',
+    on_finish: function(data) {
+        const trialType = jsPsych.timelineVariable('type');
+        data.trial_type = trialType;
+        data.speedy = data.rt < 900;
+        data.choices = [jsPsych.timelineVariable('choice1'), jsPsych.timelineVariable('choice2')];
+        
+        if (trialType === 'check') {
+            data.correct = data.response === jsPsych.timelineVariable('correct_choice');
+        }
+    }
+};
+
+// Feedback for speedy responses
+const speedFeedback = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: "<p><strong>You're going too fast.</strong></p>Please slow down and assess each triplet.<p>Press 'y' to continue.</p>",
+    choices: ['y']
+};
+
+// Feedback for check trials
+const checkFeedback = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: "<p><strong>Incorrect!</strong></p>That was an attention check. Please pay attention while completing this task.<p>Press 'y' to continue.</p>",
+    choices: ['y']
+};
+
+// Create the main procedure
+const mainProcedure = {
+    timeline: [
+        {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: '+',
+            choices: "NO_KEYS",
+            trial_duration: 500
+        },
+        createTrial,
+        {
+            timeline: [checkFeedback],
+            conditional_function: function() {
+                const lastTrial = jsPsych.data.get().last(1).values()[0];
+                return lastTrial.trial_type === 'check' && !lastTrial.correct;
+            }
+        },
+        {
+            timeline: [speedFeedback],
+            conditional_function: function() {
+                const lastTrial = jsPsych.data.get().last(1).values()[0];
+                return lastTrial.rt < 900 && lastTrial.trial_type != 'check';
+            }
+        }
+    ],
+    timeline_variables: createTrialSequence(550, 20, 50), // Adjust numbers as needed. In order: random, check, validation
+    randomize_order: false // Already randomized in createTrialSequence
+};
+
+// Add main procedure to timeline
+timeline.push(mainProcedure);
+
+// Add break
+const break_trial = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: "Feel free to take a break! Click 'Continue' when you're ready to proceed.",
+    choices: ['Continue']
+};
+//timeline.push(break_trial);
+
+
+    // including demographic instructions
+var demographic_instructions = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: "<p>Awesome!<p>For this last part of the experiment, please provide us with information about yourself.</p> ",
+      choices: ["Continue"],
+      post_trial_gap: 1000
+    };
+timeline.push(demographic_instructions);
+      
+      
+var demographics = {
+    type: jsPsychSurveyMultiSelect,
+    questions: [
+      {prompt: "Which categories describe you? Select all that apply to you:", 
+        options: ["American Indian or Alaska Native - For example, Navajo Nation, Mayan", 
+                  "Asian - For example, Chinese, Asian Indian",
+                  "Black or African American - For example, Jamaican, Ethiopian",
+                  "Hispanic or Latino - For example, Mexican or Mexican American, Puerto Rican, Salvadoran",
+                 "Middle Eastern or North African - For example, Lebanese, Iranian, Moroccan",
+                 "Native Hawaiian or Other Pacific Islander - For example, Somoan, Fijian",
+                 "White - For example, German, Irish",
+                 "Some other race, ethnicity, or origin",
+                 "I prefer not to answer"], 
+        horizontal: false,
+        required: true,
+        name: 'race_eth'}
+    ]};
+    timeline.push(demographics);  
+
+    
+      
+    var id_age = {
+      type: jsPsychSurveyText,
+      questions: [{prompt: "Please enter your age (in years):", rows: 1, columns: 6, name: "age", required: true}, 
+                  {prompt: "How do you currently describe your gender identity? Please specify.", rows: 1, columns: 60, name: "gender"},
+                 ]
+    };
+    timeline.push(id_age);
+      
+      
+// push data to server 
+timeline.push(save_data); 
+      
+   var goodbye = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: function(){
+        output = "Woohoo! You have finished the experiment. <br>";
+          if(urlvar.workerId.length > 7){
+              output = output + "<strong> Here is your secret code: C119H2OR </strong><br>"; // CHANGE THIS
+          }
+        output = output + "Click the button below to complete the experiment. Goodbye!<br><br>";
+      return output;
+      },
+      choices: ["<a href='https://app.prolific.com/submissions/complete?cc=C119H2OR'>Complete Experiment</a>"]    // CHANGE THIS  
+   };
+    timeline.push(goodbye);
+
+    
+// Run the experiment
+jsPsych.run(timeline);
+</script>
+</html>
