@@ -28,7 +28,7 @@ const jsPsych = initJsPsych({
 // Setup variables
 const timeline = [];
 const secret_code = jsPsych.randomization.randomID(8);
-const filename = `fpo_uk_general_${secret_code}.csv`; // CHANGE THIS BETWEEN VERSIONS
+const filename = `fpo_mixed_domain_${secret_code}.csv`; // CHANGE THIS BETWEEN VERSIONS
 const urlvar = jsPsych.data.urlVariables();
 
 // Save data configuration
@@ -74,7 +74,40 @@ const imagePaths = [
     "stimuli/urban_eve_old_white_man_1.png",
     "stimuli/urban_eve_young_black_woman_1.png",
     "stimuli/urban_eve_young_white_man_1.png",
+    'stimuli/rural_day_new_big_furniture_1.png',
+    'stimuli/rural_day_new_big_vehicle_1.png',
+    'stimuli/rural_day_new_small_furniture_1.png',
+    'stimuli/rural_day_new_small_vehicle_1.png',
+    'stimuli/rural_day_old_big_furniture_1.png',
+    'stimuli/rural_day_old_big_vehicle_1.png',
+    'stimuli/rural_day_old_small_furniture_1.png',
+    'stimuli/rural_day_old_small_vehicle_1.png',
+    'stimuli/rural_eve_new_big_furniture_1.png',
+    'stimuli/rural_eve_new_big_vehicle_1.png',
+    'stimuli/rural_eve_new_small_furniture_1.png',
+    'stimuli/rural_eve_new_small_vehicle_1.png',
+    'stimuli/rural_eve_old_big_furniture_1.png',
+    'stimuli/rural_eve_old_big_vehicle_1.png',
+    'stimuli/rural_eve_old_small_furniture_1.png',
+    'stimuli/rural_eve_old_small_vehicle_1.png',
+    'stimuli/urban_day_new_big_furniture_1.png',
+    'stimuli/urban_day_new_big_vehicle_1.png',
+    'stimuli/urban_day_new_small_furniture_1.png',
+    'stimuli/urban_day_new_small_vehicle_1.png',
+    'stimuli/urban_day_old_big_furniture_1.png',
+    'stimuli/urban_day_old_big_vehicle_1.png',
+    'stimuli/urban_day_old_small_furniture_1.png',
+    'stimuli/urban_day_old_small_vehicle_1.png',
+    'stimuli/urban_eve_new_big_furniture_1.png',
+    'stimuli/urban_eve_new_big_vehicle_1.png',
+    'stimuli/urban_eve_new_small_furniture_1.png',
+    'stimuli/urban_eve_new_small_vehicle_1.png',
+    'stimuli/urban_eve_old_big_furniture_1.png',
+    'stimuli/urban_eve_old_big_vehicle_1.png',
+    'stimuli/urban_eve_old_small_furniture_1.png',
+    'stimuli/urban_eve_old_small_vehicle_1.png'
     ];
+
 
 // Preload images
 const preload = {
@@ -173,306 +206,307 @@ function generateCheckTrial() {
 
 // Your predefined validation trials
 const validationTrials = [
-    {
-        type: 'validation',
-        stimulus: 'stimuli/rural_day_new_small_house_1.png',
-        choice1: 'stimuli/urban_day_new_big_house_1.png',
-        choice2: 'stimuli/rural_day_old_white_woman_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_eve_old_small_church_1.png',
-        choice1: 'stimuli/urban_eve_new_big_house_1.png',
-        choice2: 'stimuli/rural_day_old_small_house_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_eve_new_big_house_1.png',
-        choice1: 'stimuli/urban_eve_old_black_woman_1.png',
-        choice2: 'stimuli/urban_eve_new_small_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/rural_eve_old_small_house_1.png',
-        choice1: 'stimuli/urban_day_young_black_woman_1.png',
-        choice2: 'stimuli/urban_day_old_white_man_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/rural_eve_old_big_church_1.png',
-        choice1: 'stimuli/urban_eve_old_black_woman_1.png',
-        choice2: 'stimuli/urban_day_old_small_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_eve_young_black_woman_1.png',
-        choice1: 'stimuli/rural_day_new_small_house_1.png',
-        choice2: 'stimuli/rural_eve_old_big_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_young_white_man_1.png',
-        choice1: 'stimuli/urban_eve_young_white_man_1.png',
-        choice2: 'stimuli/urban_eve_old_small_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_eve_new_big_house_1.png',
-        choice1: 'stimuli/rural_day_young_white_woman_1.png',
-        choice2: 'stimuli/rural_day_new_big_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/rural_eve_young_black_man_1.png',
-        choice1: 'stimuli/rural_eve_old_white_woman_1.png',
-        choice2: 'stimuli/urban_eve_young_black_woman_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_eve_old_white_man_1.png',
-        choice1: 'stimuli/urban_eve_old_big_house_1.png',
-        choice2: 'stimuli/urban_day_old_small_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_old_small_church_1.png',
-        choice1: 'stimuli/urban_day_new_small_church_1.png',
-        choice2: 'stimuli/urban_day_young_black_woman_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_young_white_man_1.png',
-        choice1: 'stimuli/rural_day_new_small_house_1.png',
-        choice2: 'stimuli/urban_day_new_small_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/rural_day_old_white_woman_1.png',
-        choice1: 'stimuli/rural_day_new_small_house_1.png',
-        choice2: 'stimuli/urban_eve_new_small_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_eve_new_big_house_1.png',
-        choice1: 'stimuli/rural_day_old_white_woman_1.png',
-        choice2: 'stimuli/urban_eve_young_black_woman_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_young_white_man_1.png',
-        choice1: 'stimuli/urban_eve_new_small_church_1.png',
-        choice2: 'stimuli/rural_day_old_white_woman_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_old_white_man_1.png',
-        choice1: 'stimuli/rural_eve_old_big_church_1.png',
-        choice2: 'stimuli/urban_day_old_black_woman_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/rural_day_old_big_church_1.png',
-        choice1: 'stimuli/rural_eve_old_black_man_1.png',
-        choice2: 'stimuli/rural_eve_young_black_man_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_eve_new_big_house_1.png',
-        choice1: 'stimuli/urban_day_young_white_man_1.png',
-        choice2: 'stimuli/urban_eve_old_small_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_old_black_woman_1.png',
-        choice1: 'stimuli/urban_eve_old_big_house_1.png',
-        choice2: 'stimuli/urban_eve_new_big_house_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_new_big_house_1.png',
-        choice1: 'stimuli/rural_eve_old_big_church_1.png',
-        choice2: 'stimuli/urban_eve_new_big_house_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/rural_day_new_small_house_1.png',
-        choice1: 'stimuli/urban_day_young_white_man_1.png',
-        choice2: 'stimuli/rural_day_new_big_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_eve_old_white_man_1.png',
-        choice1: 'stimuli/rural_eve_old_black_man_1.png',
-        choice2: 'stimuli/urban_eve_young_white_man_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/rural_day_old_big_church_1.png',
-        choice1: 'stimuli/urban_eve_old_black_woman_1.png',
-        choice2: 'stimuli/urban_eve_old_small_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/rural_day_new_small_house_1.png',
-        choice1: 'stimuli/urban_eve_young_white_man_1.png',
-        choice2: 'stimuli/urban_day_young_white_man_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_eve_old_small_church_1.png',
-        choice1: 'stimuli/rural_eve_young_black_man_1.png',
-        choice2: 'stimuli/urban_eve_young_white_man_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_old_white_man_1.png',
-        choice1: 'stimuli/rural_day_young_white_woman_1.png',
-        choice2: 'stimuli/urban_day_new_big_house_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_eve_old_white_man_1.png',
-        choice1: 'stimuli/rural_day_young_black_man_1.png',
-        choice2: 'stimuli/urban_eve_new_big_house_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/rural_day_new_big_church_1.png',
-        choice1: 'stimuli/urban_day_old_small_church_1.png',
-        choice2: 'stimuli/rural_day_young_white_woman_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/rural_eve_old_big_church_1.png',
-        choice1: 'stimuli/rural_day_old_white_woman_1.png',
-        choice2: 'stimuli/urban_day_old_small_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_young_white_man_1.png',
-        choice1: 'stimuli/urban_eve_young_black_woman_1.png',
-        choice2: 'stimuli/urban_day_old_black_woman_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_eve_young_white_man_1.png',
-        choice1: 'stimuli/rural_day_new_small_house_1.png',
-        choice2: 'stimuli/urban_eve_old_small_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_new_big_house_1.png',
-        choice1: 'stimuli/urban_eve_old_big_house_1.png',
-        choice2: 'stimuli/rural_day_old_big_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_new_small_church_1.png',
-        choice1: 'stimuli/rural_eve_old_white_woman_1.png',
-        choice2: 'stimuli/rural_eve_young_black_man_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_old_white_man_1.png',
-        choice1: 'stimuli/urban_day_old_big_house_1.png',
-        choice2: 'stimuli/urban_day_old_black_woman_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/rural_eve_old_black_man_1.png',
-        choice1: 'stimuli/rural_eve_old_small_house_1.png',
-        choice2: 'stimuli/rural_day_new_small_house_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/rural_day_old_big_church_1.png',
-        choice1: 'stimuli/urban_day_old_small_church_1.png',
-        choice2: 'stimuli/urban_eve_new_big_house_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_eve_new_big_house_1.png',
-        choice1: 'stimuli/urban_day_old_big_house_1.png',
-        choice2: 'stimuli/rural_day_old_big_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/rural_day_old_big_church_1.png',
-        choice1: 'stimuli/urban_eve_new_small_church_1.png',
-        choice2: 'stimuli/rural_eve_old_big_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_young_white_man_1.png',
-        choice1: 'stimuli/rural_eve_young_black_man_1.png',
-        choice2: 'stimuli/rural_day_young_white_woman_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_young_white_man_1.png',
-        choice1: 'stimuli/rural_eve_old_big_church_1.png',
-        choice2: 'stimuli/rural_eve_old_black_man_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_eve_young_white_man_1.png',
-        choice1: 'stimuli/rural_day_old_black_man_1.png',
-        choice2: 'stimuli/urban_eve_old_small_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_young_white_man_1.png',
-        choice1: 'stimuli/rural_day_young_white_woman_1.png',
-        choice2: 'stimuli/rural_day_new_big_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/rural_day_young_black_man_1.png',
-        choice1: 'stimuli/rural_day_old_big_church_1.png',
-        choice2: 'stimuli/urban_eve_old_small_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_young_black_woman_1.png',
-        choice1: 'stimuli/rural_eve_old_black_man_1.png',
-        choice2: 'stimuli/rural_day_old_black_man_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_eve_new_small_church_1.png',
-        choice1: 'stimuli/urban_eve_young_white_man_1.png',
-        choice2: 'stimuli/rural_day_new_small_house_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_old_white_man_1.png',
-        choice1: 'stimuli/urban_eve_old_black_woman_1.png',
-        choice2: 'stimuli/rural_day_old_black_man_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/rural_day_young_black_man_1.png',
-        choice1: 'stimuli/urban_day_new_big_house_1.png',
-        choice2: 'stimuli/rural_eve_young_black_man_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_old_black_woman_1.png',
-        choice1: 'stimuli/rural_eve_old_white_woman_1.png',
-        choice2: 'stimuli/urban_eve_new_small_church_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_eve_old_black_woman_1.png',
-        choice1: 'stimuli/urban_eve_new_big_house_1.png',
-        choice2: 'stimuli/rural_day_new_small_house_1.png'
-    },
-    {
-        type: 'validation',
-        stimulus: 'stimuli/urban_day_new_small_church_1.png',
-        choice1: 'stimuli/rural_day_new_small_house_1.png',
-        choice2: 'stimuli/urban_day_old_white_man_1.png'
-    }
+
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_day_new_big_vehicle_1.png",
+    "choice1": "stimuli/urban_eve_new_small_church_1.png",
+    "choice2": "stimuli/rural_eve_young_white_woman_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_eve_new_big_house_1.png",
+    "choice1": "stimuli/rural_eve_old_small_vehicle_1.png",
+    "choice2": "stimuli/rural_eve_old_white_woman_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_day_old_small_church_1.png",
+    "choice1": "stimuli/rural_day_old_black_man_1.png",
+    "choice2": "stimuli/urban_eve_old_small_vehicle_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_eve_new_small_house_1.png",
+    "choice1": "stimuli/rural_eve_old_white_woman_1.png",
+    "choice2": "stimuli/urban_day_old_small_furniture_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_eve_old_white_woman_1.png",
+    "choice1": "stimuli/rural_eve_old_small_house_1.png",
+    "choice2": "stimuli/rural_day_old_small_vehicle_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_eve_new_big_church_1.png",
+    "choice1": "stimuli/urban_day_young_white_man_1.png",
+    "choice2": "stimuli/rural_eve_old_big_furniture_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_eve_new_big_house_1.png",
+    "choice1": "stimuli/rural_eve_old_white_woman_1.png",
+    "choice2": "stimuli/urban_day_old_small_vehicle_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_day_old_big_church_1.png",
+    "choice1": "stimuli/urban_day_new_big_furniture_1.png",
+    "choice2": "stimuli/rural_eve_old_white_woman_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_eve_old_small_furniture_1.png",
+    "choice1": "stimuli/rural_eve_old_big_church_1.png",
+    "choice2": "stimuli/rural_eve_young_black_man_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_eve_old_big_house_1.png",
+    "choice1": "stimuli/rural_day_new_big_furniture_1.png",
+    "choice2": "stimuli/urban_eve_old_black_woman_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_eve_new_big_church_1.png",
+    "choice1": "stimuli/urban_day_old_big_furniture_1.png",
+    "choice2": "stimuli/urban_eve_young_white_man_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_eve_old_white_woman_1.png",
+    "choice1": "stimuli/urban_day_new_small_vehicle_1.png",
+    "choice2": "stimuli/urban_day_old_small_church_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_eve_young_black_man_1.png",
+    "choice1": "stimuli/urban_eve_new_big_house_1.png",
+    "choice2": "stimuli/rural_eve_new_small_furniture_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_eve_new_big_house_1.png",
+    "choice1": "stimuli/urban_eve_old_white_man_1.png",
+    "choice2": "stimuli/rural_day_new_big_vehicle_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_day_old_big_house_1.png",
+    "choice1": "stimuli/urban_eve_new_big_furniture_1.png",
+    "choice2": "stimuli/urban_eve_young_white_man_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_eve_new_big_church_1.png",
+    "choice1": "stimuli/urban_day_young_black_woman_1.png",
+    "choice2": "stimuli/rural_eve_new_big_furniture_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_day_old_small_house_1.png",
+    "choice1": "stimuli/urban_eve_young_white_man_1.png",
+    "choice2": "stimuli/rural_eve_new_small_furniture_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_day_old_big_house_1.png",
+    "choice1": "stimuli/rural_day_new_small_vehicle_1.png",
+    "choice2": "stimuli/rural_day_old_white_woman_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_day_old_small_church_1.png",
+    "choice1": "stimuli/rural_eve_old_big_vehicle_1.png",
+    "choice2": "stimuli/rural_day_young_white_woman_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_eve_old_white_woman_1.png",
+    "choice1": "stimuli/rural_day_new_big_church_1.png",
+    "choice2": "stimuli/urban_day_old_small_vehicle_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_day_old_big_vehicle_1.png",
+    "choice1": "stimuli/rural_day_young_black_man_1.png",
+    "choice2": "stimuli/urban_eve_new_small_church_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_eve_young_white_woman_1.png",
+    "choice1": "stimuli/urban_day_old_small_church_1.png",
+    "choice2": "stimuli/urban_day_old_small_vehicle_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_day_new_big_house_1.png",
+    "choice1": "stimuli/urban_day_old_big_furniture_1.png",
+    "choice2": "stimuli/urban_eve_young_white_man_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_day_old_black_woman_1.png",
+    "choice1": "stimuli/urban_eve_new_small_church_1.png",
+    "choice2": "stimuli/urban_day_old_small_furniture_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_eve_old_big_church_1.png",
+    "choice1": "stimuli/urban_day_old_small_furniture_1.png",
+    "choice2": "stimuli/urban_day_old_white_man_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_day_old_small_furniture_1.png",
+    "choice1": "stimuli/urban_eve_young_white_man_1.png",
+    "choice2": "stimuli/urban_eve_new_small_church_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_day_old_white_woman_1.png",
+    "choice1": "stimuli/rural_day_new_small_house_1.png",
+    "choice2": "stimuli/urban_day_new_big_vehicle_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_eve_old_big_vehicle_1.png",
+    "choice1": "stimuli/rural_day_old_black_man_1.png",
+    "choice2": "stimuli/rural_eve_old_big_church_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_eve_old_white_woman_1.png",
+    "choice1": "stimuli/urban_eve_old_big_furniture_1.png",
+    "choice2": "stimuli/urban_day_old_big_house_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_day_new_big_church_1.png",
+    "choice1": "stimuli/rural_eve_young_black_man_1.png",
+    "choice2": "stimuli/rural_eve_old_big_vehicle_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_day_old_small_furniture_1.png",
+    "choice1": "stimuli/rural_day_young_white_woman_1.png",
+    "choice2": "stimuli/urban_eve_old_big_house_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_eve_old_big_vehicle_1.png",
+    "choice1": "stimuli/rural_eve_old_black_man_1.png",
+    "choice2": "stimuli/rural_eve_old_big_church_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_eve_old_white_man_1.png",
+    "choice1": "stimuli/urban_eve_old_big_house_1.png",
+    "choice2": "stimuli/rural_eve_new_small_vehicle_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_eve_old_small_furniture_1.png",
+    "choice1": "stimuli/rural_day_young_white_woman_1.png",
+    "choice2": "stimuli/urban_day_old_big_house_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_day_young_black_man_1.png",
+    "choice1": "stimuli/rural_day_new_big_furniture_1.png",
+    "choice2": "stimuli/rural_day_new_small_house_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_day_old_small_furniture_1.png",
+    "choice1": "stimuli/urban_day_young_black_woman_1.png",
+    "choice2": "stimuli/rural_day_old_big_church_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_day_young_black_woman_1.png",
+    "choice1": "stimuli/urban_eve_old_big_house_1.png",
+    "choice2": "stimuli/urban_day_old_small_furniture_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_eve_old_white_man_1.png",
+    "choice1": "stimuli/rural_day_old_small_house_1.png",
+    "choice2": "stimuli/urban_eve_new_big_furniture_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_eve_new_small_house_1.png",
+    "choice1": "stimuli/urban_eve_young_white_man_1.png",
+    "choice2": "stimuli/urban_day_new_small_furniture_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_eve_old_small_furniture_1.png",
+    "choice1": "stimuli/rural_eve_young_white_woman_1.png",
+    "choice2": "stimuli/urban_eve_new_big_house_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_day_old_black_man_1.png",
+    "choice1": "stimuli/rural_eve_old_small_vehicle_1.png",
+    "choice2": "stimuli/urban_day_new_big_house_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_day_new_small_church_1.png",
+    "choice1": "stimuli/urban_eve_old_black_woman_1.png",
+    "choice2": "stimuli/rural_day_new_big_vehicle_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_day_old_small_house_1.png",
+    "choice1": "stimuli/urban_eve_young_black_woman_1.png",
+    "choice2": "stimuli/urban_eve_new_big_furniture_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_day_old_big_vehicle_1.png",
+    "choice1": "stimuli/rural_day_old_black_man_1.png",
+    "choice2": "stimuli/urban_eve_new_big_house_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_day_old_big_furniture_1.png",
+    "choice1": "stimuli/rural_eve_old_white_woman_1.png",
+    "choice2": "stimuli/rural_day_new_big_church_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_eve_old_small_house_1.png",
+    "choice1": "stimuli/urban_eve_new_big_vehicle_1.png",
+    "choice2": "stimuli/rural_day_young_black_man_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_day_old_big_furniture_1.png",
+    "choice1": "stimuli/rural_day_old_black_man_1.png",
+    "choice2": "stimuli/urban_eve_old_big_house_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_day_old_big_vehicle_1.png",
+    "choice1": "stimuli/urban_eve_young_white_man_1.png",
+    "choice2": "stimuli/rural_eve_old_big_church_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/rural_day_new_big_vehicle_1.png",
+    "choice1": "stimuli/urban_eve_new_big_house_1.png",
+    "choice2": "stimuli/rural_eve_young_black_man_1.png"
+  },
+  {
+    "type": "validation",
+    "stimulus": "stimuli/urban_day_new_big_house_1.png",
+    "choice1": "stimuli/rural_day_young_black_man_1.png",
+    "choice2": "stimuli/rural_day_old_big_furniture_1.png"
+  }
 ];
 
 // Function to create a mixed trial sequence
