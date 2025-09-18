@@ -24,7 +24,7 @@ const jsPsych = initJsPsych({
         jsPsych.data.addProperties({worker_id: urlvar.workerId});
     },
     max_load_time: 120000,
-    on_finish: function(){ 
+    on_finish: function(data){ 
         window.location.assign("https://uwmadison.sona-systems.com/webstudy_credit.aspx?experiment_id=2226&credit_token=a9411967764b499caa53a0ecccabe0a1&survey_code="+sona_id)
     }
 });
@@ -37,6 +37,7 @@ const urlvar = jsPsych.data.urlVariables();
 
 // to grant automatic credit in SONA
 let sona_id = urlvar.workerId;
+const completion_link = "https://uwmadison.sona-systems.com/webstudy_credit.aspx?experiment_id=2226&credit_token=a9411967764b499caa53a0ecccabe0a1&survey_code="+sona_id;
 
 // Progress tracking variables
 const n_main_trials = 620; // Total number of main trials
@@ -711,6 +712,7 @@ timeline.push(save_data);
    var goodbye = {
       type: jsPsychHtmlButtonResponse,
       stimulus: function(){
+        output = "Woohoo! You have finished the experiment.<br>";
           if(urlvar.workerId.length > 7){
               output = output + "<strong> Here is your secret code: C119H2OR </strong><br>"; // CHANGE THIS
           }
@@ -720,6 +722,12 @@ timeline.push(save_data);
       choices: ['Complete Experiment']    // CHANGE THIS  
    };
     timeline.push(goodbye);
+
+  var end = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: "You may now close this page. " 
+    };
+    timeline.push(end);
 
 // Run the experiment
 jsPsych.run(timeline);
