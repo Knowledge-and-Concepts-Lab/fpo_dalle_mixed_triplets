@@ -23,7 +23,10 @@ const jsPsych = initJsPsych({
     on_data_update: function() {
         jsPsych.data.addProperties({worker_id: urlvar.workerId});
     },
-    max_load_time: 120000
+    max_load_time: 120000,
+    on_finish: function(data){ 
+        window.location.assign("https://uwmadison.sona-systems.com/webstudy_credit.aspx?experiment_id=2226&credit_token=a9411967764b499caa53a0ecccabe0a1&survey_code="+sona_id)
+    }
 });
 
 // Setup variables
@@ -31,6 +34,9 @@ const timeline = [];
 const secret_code = jsPsych.randomization.randomID(8);
 const filename = `fpo_mixed_domain_fullSet_${secret_code}.csv`; // CHANGE THIS BETWEEN VERSIONS
 const urlvar = jsPsych.data.urlVariables();
+
+// to grant automatic credit in SONA
+let sona_id = urlvar.workerId;
 
 // Progress tracking variables
 const n_main_trials = 620; // Total number of main trials
@@ -705,18 +711,16 @@ timeline.push(save_data);
    var goodbye = {
       type: jsPsychHtmlButtonResponse,
       stimulus: function(){
-        output = "Woohoo! You have finished the experiment. <br>";
           if(urlvar.workerId.length > 7){
               output = output + "<strong> Here is your secret code: C119H2OR </strong><br>"; // CHANGE THIS
           }
-        output = output + "Click the button below to complete the experiment. Goodbye!<br><br>";
+        output = output + "Click the button below to complete the experiment.<br><br>";
       return output;
       },
-      choices: ["<a href='https://app.prolific.com/submissions/complete?cc=C119H2OR'>Complete Experiment</a>"]    // CHANGE THIS  
+      choices: ['Complete Experiment']    // CHANGE THIS  
    };
     timeline.push(goodbye);
 
-    
 // Run the experiment
 jsPsych.run(timeline);
 </script>
