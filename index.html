@@ -24,7 +24,7 @@ const jsPsych = initJsPsych({
         jsPsych.data.addProperties({worker_id: urlvar.workerId});
     },
     max_load_time: 120000,
-    on_finish: function(data){ 
+    on_finish: function(){ 
         window.location.assign("https://uwmadison.sona-systems.com/webstudy_credit.aspx?experiment_id=2226&credit_token=a9411967764b499caa53a0ecccabe0a1&survey_code="+sona_id)
     }
 });
