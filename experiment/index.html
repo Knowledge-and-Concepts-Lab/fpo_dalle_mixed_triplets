@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Triadic Judgment Task</title>
+    <title></title>
     <script src="https://unpkg.com/jspsych@7.3.4"></script>
     <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" type="text/css" />
 
     <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-image-button-response@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-fullscreen@1.1.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-survey-multi-select@1.1.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.1.0"></script>
@@ -19,8 +20,11 @@
 </head>
 <body></body>
 <script>
-// Initialize jsPsych with custom progress bar settings
-const jsPsych = initJsPsych({
+// ── Set page title from config ───────────────────────────
+document.title = CONFIG.PAGE_TITLE;
+
+// ── Initialize jsPsych ───────────────────────────────────
+var jsPsych = initJsPsych({
     show_progress_bar: true,
     auto_update_progress_bar: false,
     on_data_update: function() {
@@ -28,124 +32,158 @@ const jsPsych = initJsPsych({
     },
     max_load_time: CONFIG.MAX_LOAD_TIME_MS,
     on_finish: function(data){
-        const completionLink = `${CONFIG.SONA_BASE_URL}?experiment_id=${CONFIG.SONA_EXPERIMENT_ID}&credit_token=${CONFIG.SONA_CREDIT_TOKEN}&survey_code=${sona_id}`;
+        var completionLink = CONFIG.SONA_BASE_URL +
+            "?experiment_id=" + CONFIG.SONA_EXPERIMENT_ID +
+            "&credit_token=" + CONFIG.SONA_CREDIT_TOKEN +
+            "&survey_code=" + sona_id;
         window.location.assign(completionLink);
     }
 });
 
-// Setup variables
-const timeline = [];
-const secret_code = jsPsych.randomization.randomID(8);
-const filename = `${CONFIG.FILENAME_PREFIX}_${secret_code}.csv`;
-const urlvar = jsPsych.data.urlVariables();
+// ── Setup variables ──────────────────────────────────────
+var timeline = [];
+var secret_code = jsPsych.randomization.randomID(8);
+var filename = CONFIG.FILENAME_PREFIX + "_" + secret_code + ".csv";
+var urlvar = jsPsych.data.urlVariables();
+var sona_id = urlvar.workerId;
+var completed_main_trials = 0;
+var useKeyboard = CONFIG.RESPONSE_MODE === "keyboard";
 
-// to grant automatic credit in SONA
-let sona_id = urlvar.workerId;
-
-// Progress tracking variables
-let completed_main_trials = 0;
-
-// Save data configuration
-const save_data = {
+// ── Save data configuration ─────────────────────────────
+var save_data = {
   type: jsPsychPipe,
   action: "save",
   experiment_id: CONFIG.EXPERIMENT_ID,
   filename: filename,
-  data_string: ()=>jsPsych.data.get().csv()
+  data_string: function() { return jsPsych.data.get().csv(); }
 };
 
-// Preload images
-const preload = {
+// ── Preload images ──────────────────────────────────────
+timeline.push({
     type: jsPsychPreload,
     auto_preload: true,
     images: IMAGE_PATHS,
     show_progress_bar: true,
-    message: "Loading experiment files..."
-};
-timeline.push(preload);
+    message: CONFIG.PRELOAD_MESSAGE
+});
 
-// Welcome & consent
-var welcome = {
+// ── Welcome ─────────────────────────────────────────────
+timeline.push({
   type: jsPsychHtmlKeyboardResponse,
-  stimulus: "Welcome to the experiment. Press any key to begin."
-};
-timeline.push(welcome);
+  stimulus: CONFIG.WELCOME_TEXT
+});
 
+// ── Fullscreen ──────────────────────────────────────────
 timeline.push({
   type: jsPsychFullscreen,
   fullscreen_mode: true
 });
 
-var consent = {
+// ── Consent ─────────────────────────────────────────────
+timeline.push({
     type: jsPsychImageButtonResponse,
-    stimulus: "assets/consent/kc_lab_consent_prolific.png",
-    choices: ["Consent & Continue"]
-};
-timeline.push(consent);
+    stimulus: CONFIG.CONSENT_IMAGE_PATH,
+    choices: [CONFIG.CONSENT_BUTTON_TEXT]
+});
 
-// Instructions
-var instructions = {
+// ── Instructions ────────────────────────────────────────
+var instructionsText = CONFIG.INSTRUCTIONS_HTML
+    .replace("{{N_MAIN_TRIALS}}", CONFIG.N_MAIN_TRIALS);
+
+timeline.push({
   type: jsPsychHtmlButtonResponse,
-  stimulus: "<p>In each trial of this task, you will see three images: one target item on top, and two choices beneath the target item." +
-    "</p><p>For each trial, <strong>please select the item that is most similar to the target item USING ANY CRITERIA.</strong>"+
-    "<p>There will be " + CONFIG.N_MAIN_TRIALS + " trials.</p>"+
-      "<p>Click 'Continue' to begin the test.</p>",
-    choices: ["Continue"],
+  stimulus: instructionsText,
+  choices: [CONFIG.CONTINUE_BUTTON_TEXT],
   post_trial_gap: CONFIG.POST_INSTRUCTION_GAP_MS
+});
+
+// ── jsPsych sampling wrapper ────────────────────────────
+var sampleFn = function(arr, n) {
+    return jsPsych.randomization.sampleWithoutReplacement(arr, n);
 };
-timeline.push(instructions);
 
-// jsPsych sampling wrapper for utils functions
-const sampleFn = (arr, n) => jsPsych.randomization.sampleWithoutReplacement(arr, n);
+// ── Build main trial (button or keyboard) ───────────────
+var createTrial;
 
-// Create trial
-const createTrial = {
-    type: jsPsychImageButtonResponse,
-    stimulus: jsPsych.timelineVariable('stimulus'),
-    choices: function() {
-        return [
-            jsPsych.timelineVariable('choice1'),
-            jsPsych.timelineVariable('choice2')
-        ];
-    },
-    button_html: '<button class="jspsych-btn"><img src=%choice%></button>',
-    on_finish: function(data) {
-        const trialType = jsPsych.timelineVariable('type');
-        data.trial_type = trialType;
-        data.speedy = data.rt < CONFIG.MIN_RT_MS;
-        data.choices = [jsPsych.timelineVariable('choice1'), jsPsych.timelineVariable('choice2')];
+if (useKeyboard) {
+    // Keyboard mode: show target + two choices as HTML, respond with keys
+    createTrial = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: function() {
+            var target = jsPsych.timelineVariable('stimulus');
+            var left = jsPsych.timelineVariable('choice1');
+            var right = jsPsych.timelineVariable('choice2');
+            return '<div style="text-align:center;">' +
+                '<div><img src="' + target + '" style="max-height:300px;"></div>' +
+                '<div style="display:flex;justify-content:center;gap:40px;margin-top:20px;">' +
+                '<div><img src="' + left + '" style="max-height:200px;"><br><b>' + CONFIG.RESPONSE_KEYS[0] + '</b></div>' +
+                '<div><img src="' + right + '" style="max-height:200px;"><br><b>' + CONFIG.RESPONSE_KEYS[1] + '</b></div>' +
+                '</div></div>';
+        },
+        choices: CONFIG.RESPONSE_KEYS,
+        on_finish: function(data) {
+            var trialType = jsPsych.timelineVariable('type');
+            data.trial_type = trialType;
+            // Map key press to choice index (0 = left, 1 = right)
+            data.response = CONFIG.RESPONSE_KEYS.indexOf(data.response);
+            data.speedy = data.rt < CONFIG.MIN_RT_MS;
+            data.choices = [jsPsych.timelineVariable('choice1'), jsPsych.timelineVariable('choice2')];
 
-        if (trialType === 'check') {
-            data.correct = data.response === jsPsych.timelineVariable('correct_choice');
+            if (trialType === 'check') {
+                data.correct = data.response === jsPsych.timelineVariable('correct_choice');
+            }
+
+            completed_main_trials++;
+            jsPsych.setProgressBar(completed_main_trials / CONFIG.N_MAIN_TRIALS);
         }
+    };
+} else {
+    // Button mode (default)
+    createTrial = {
+        type: jsPsychImageButtonResponse,
+        stimulus: jsPsych.timelineVariable('stimulus'),
+        choices: function() {
+            return [
+                jsPsych.timelineVariable('choice1'),
+                jsPsych.timelineVariable('choice2')
+            ];
+        },
+        button_html: '<button class="jspsych-btn"><img src=%choice%></button>',
+        on_finish: function(data) {
+            var trialType = jsPsych.timelineVariable('type');
+            data.trial_type = trialType;
+            data.speedy = data.rt < CONFIG.MIN_RT_MS;
+            data.choices = [jsPsych.timelineVariable('choice1'), jsPsych.timelineVariable('choice2')];
 
-        // Update progress bar after each main trial
-        completed_main_trials++;
-        const progress = completed_main_trials / CONFIG.N_MAIN_TRIALS;
-        jsPsych.setProgressBar(progress);
-    }
-};
+            if (trialType === 'check') {
+                data.correct = data.response === jsPsych.timelineVariable('correct_choice');
+            }
 
-// Feedback for speedy responses
-const speedFeedback = {
+            completed_main_trials++;
+            jsPsych.setProgressBar(completed_main_trials / CONFIG.N_MAIN_TRIALS);
+        }
+    };
+}
+
+// ── Feedback screens ────────────────────────────────────
+var speedFeedback = {
     type: jsPsychHtmlKeyboardResponse,
-    stimulus: "<p><strong>You're going too fast.</strong></p>Please slow down and assess each triplet.<p>Press 'y' to continue.</p>",
-    choices: ['y']
+    stimulus: CONFIG.SPEED_FEEDBACK_HTML,
+    choices: [CONFIG.FEEDBACK_CONTINUE_KEY]
 };
 
-// Feedback for check trials
-const checkFeedback = {
+var checkFeedback = {
     type: jsPsychHtmlKeyboardResponse,
-    stimulus: "<p><strong>Incorrect!</strong></p>That was an attention check. Please pay attention while completing this task.<p>Press 'y' to continue.</p>",
-    choices: ['y']
+    stimulus: CONFIG.CHECK_FEEDBACK_HTML,
+    choices: [CONFIG.FEEDBACK_CONTINUE_KEY]
 };
 
-// Create the main procedure
-const mainProcedure = {
+// ── Main procedure ──────────────────────────────────────
+timeline.push({
     timeline: [
         {
             type: jsPsychHtmlKeyboardResponse,
-            stimulus: '+',
+            stimulus: CONFIG.FIXATION_SYMBOL,
             choices: "NO_KEYS",
             trial_duration: CONFIG.FIXATION_DURATION_MS
         },
@@ -153,15 +191,15 @@ const mainProcedure = {
         {
             timeline: [checkFeedback],
             conditional_function: function() {
-                const lastTrial = jsPsych.data.get().last(1).values()[0];
+                var lastTrial = jsPsych.data.get().last(1).values()[0];
                 return lastTrial.trial_type === 'check' && !lastTrial.correct;
             }
         },
         {
             timeline: [speedFeedback],
             conditional_function: function() {
-                const lastTrial = jsPsych.data.get().last(1).values()[0];
-                return lastTrial.rt < CONFIG.MIN_RT_MS && lastTrial.trial_type != 'check';
+                var lastTrial = jsPsych.data.get().last(1).values()[0];
+                return lastTrial.rt < CONFIG.MIN_RT_MS && lastTrial.trial_type !== 'check';
             }
         }
     ],
@@ -173,69 +211,57 @@ const mainProcedure = {
         VALIDATION_TRIALS,
         sampleFn
     ),
-    randomize_order: false, // Already randomized in createTrialSequence
+    randomize_order: false,
     on_timeline_start: function() {
         jsPsych.setProgressBar(0);
     }
-};
+});
 
-// Add main procedure to timeline
-timeline.push(mainProcedure);
-
-// Demographics
-var demographic_instructions = {
+// ── Demographics ────────────────────────────────────────
+timeline.push({
     type: jsPsychHtmlButtonResponse,
-    stimulus: "<p>Awesome!<p>For this last part of the experiment, please provide us with information about yourself.</p> ",
-    choices: ["Continue"],
-    post_trial_gap: 1000
-};
-timeline.push(demographic_instructions);
+    stimulus: CONFIG.DEMOGRAPHIC_INSTRUCTIONS_HTML,
+    choices: [CONFIG.CONTINUE_BUTTON_TEXT],
+    post_trial_gap: CONFIG.POST_DEMOGRAPHIC_GAP_MS
+});
 
-var demographics = {
+timeline.push({
     type: jsPsychSurveyMultiSelect,
-    questions: [
-      {prompt: "Which categories describe you? Select all that apply to you:",
-        options: ["American Indian or Alaska Native - For example, Navajo Nation, Mayan",
-                  "Asian - For example, Chinese, Asian Indian",
-                  "Black or African American - For example, Jamaican, Ethiopian",
-                  "Hispanic or Latino - For example, Mexican or Mexican American, Puerto Rican, Salvadoran",
-                 "Middle Eastern or North African - For example, Lebanese, Iranian, Moroccan",
-                 "Native Hawaiian or Other Pacific Islander - For example, Somoan, Fijian",
-                 "White - For example, German, Irish",
-                 "Some other race, ethnicity, or origin",
-                 "I prefer not to answer"],
+    questions: [{
+        prompt: CONFIG.RACE_ETHNICITY_PROMPT,
+        options: CONFIG.RACE_ETHNICITY_OPTIONS,
         horizontal: false,
         required: true,
-        name: 'race_eth'}
-    ]};
-timeline.push(demographics);
+        name: 'race_eth'
+    }]
+});
 
-var id_age = {
+timeline.push({
     type: jsPsychSurveyText,
-    questions: [{prompt: "Please enter your age (in years):", rows: 1, columns: 6, name: "age", required: true},
-                {prompt: "How do you currently describe your gender identity? Please specify.", rows: 1, columns: 60, name: "gender"},
-               ]
-};
-timeline.push(id_age);
+    questions: [
+        {prompt: CONFIG.AGE_PROMPT, rows: 1, columns: CONFIG.AGE_COLUMNS, name: "age", required: true},
+        {prompt: CONFIG.GENDER_PROMPT, rows: 1, columns: CONFIG.GENDER_COLUMNS, name: "gender"}
+    ]
+});
 
-// push data to server
+// ── Save data ───────────────────────────────────────────
 timeline.push(save_data);
 
-var goodbye = {
+// ── Goodbye ─────────────────────────────────────────────
+timeline.push({
     type: jsPsychHtmlButtonResponse,
-    stimulus: function(){
-        let output = "Woohoo! You have finished the experiment.<br>";
-        if(urlvar.workerId.length > 7){
-            output = output + "<strong> Here is your secret code: " + CONFIG.SECRET_CODE + " </strong><br>";
+    stimulus: function() {
+        var output = CONFIG.GOODBYE_HTML;
+        if (urlvar.workerId.length > CONFIG.WORKER_ID_MIN_LENGTH) {
+            output = output + CONFIG.SECRET_CODE_HTML
+                .replace("{{SECRET_CODE}}", CONFIG.SECRET_CODE);
         }
-        output = output + "Click the button below to complete the experiment.<br><br>";
         return output;
     },
-    choices: ['Complete Experiment']
-};
-timeline.push(goodbye);
+    choices: [CONFIG.COMPLETE_BUTTON_TEXT]
+});
 
-// Run the experiment
+// ── Run ─────────────────────────────────────────────────
 jsPsych.run(timeline);
 </script>
 </html>
