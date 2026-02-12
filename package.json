@@ -1,0 +1,14 @@
+{
+  "name": "triplet-experiment-template",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Template for triadic comparison experiments using jsPsych",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.0"
+  },
+  "license": "MIT"
+}
