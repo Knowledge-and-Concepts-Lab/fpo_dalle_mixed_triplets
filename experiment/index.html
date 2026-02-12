@@ -13,13 +13,12 @@
     <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.1.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.0"></script>
     <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe"></script>
+    <script src="js/config.js"></script>
+    <script src="js/stimuli.js"></script>
+    <script src="js/utils.js"></script>
 </head>
 <body></body>
-<script type="module">
-import { CONFIG } from './js/config.js';
-import { IMAGE_PATHS, VALIDATION_TRIALS } from './js/stimuli.js';
-import { shuffle, getUniqueRandomImages, generateRandomTrial, generateCheckTrial, createTrialSequence } from './js/utils.js';
-
+<script>
 // Initialize jsPsych with custom progress bar settings
 const jsPsych = initJsPsych({
     show_progress_bar: true,

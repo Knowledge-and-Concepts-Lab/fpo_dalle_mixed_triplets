@@ -4,7 +4,8 @@
  * Update these values when creating a new experiment version.
  */
 
-export const CONFIG = {
+/* eslint-disable no-unused-vars */
+var CONFIG = {
   // Trial counts
   N_RANDOM_TRIALS: 550,
   N_CHECK_TRIALS: 20,
@@ -30,3 +31,8 @@ export const CONFIG = {
   // Participant feedback
   SECRET_CODE: "C119H2OR",
 };
+
+// Export for testing (Node.js / vitest)
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { CONFIG };
+}

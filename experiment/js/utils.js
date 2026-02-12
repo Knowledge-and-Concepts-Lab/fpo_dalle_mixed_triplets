@@ -4,15 +4,19 @@
  * These functions have no dependency on jsPsych and can be unit tested directly.
  */
 
+/* eslint-disable no-unused-vars */
+
 /**
  * Fisher-Yates shuffle — randomizes array in place and returns it.
  * @param {Array} array
  * @returns {Array} the same array, shuffled
  */
-export function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+function shuffle(array) {
+  for (var i = array.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = array[i];
+    array[i] = array[j];
+    array[j] = tmp;
   }
   return array;
 }
@@ -26,15 +30,11 @@ export function shuffle(array) {
  * @param {Function} sampleFn  - sampling function(array, count) → array
  * @returns {string[]|null} selected paths, or null if not enough available
  */
-export function getUniqueRandomImages(
-  imagePaths,
-  n,
-  excludeImages = [],
-  sampleFn
-) {
-  const availableImages = imagePaths.filter(
-    (img) => !excludeImages.includes(img)
-  );
+function getUniqueRandomImages(imagePaths, n, excludeImages, sampleFn) {
+  excludeImages = excludeImages || [];
+  var availableImages = imagePaths.filter(function (img) {
+    return excludeImages.indexOf(img) === -1;
+  });
   if (availableImages.length < n) {
     return null;
   }
@@ -48,8 +48,8 @@ export function getUniqueRandomImages(
  * @param {Function} sampleFn - sampling function(array, count) → array
  * @returns {{ type: string, stimulus: string, choice1: string, choice2: string }}
  */
-export function generateRandomTrial(imagePaths, sampleFn) {
-  const selectedImages = getUniqueRandomImages(imagePaths, 3, [], sampleFn);
+function generateRandomTrial(imagePaths, sampleFn) {
+  var selectedImages = getUniqueRandomImages(imagePaths, 3, [], sampleFn);
   return {
     type: "random",
     stimulus: selectedImages[0],
@@ -65,10 +65,10 @@ export function generateRandomTrial(imagePaths, sampleFn) {
  * @param {Function} sampleFn - sampling function(array, count) → array
  * @returns {{ type: string, stimulus: string, choice1: string, choice2: string, correct_choice: number }}
  */
-export function generateCheckTrial(imagePaths, sampleFn) {
-  const target = sampleFn(imagePaths, 1)[0];
-  const otherChoice = getUniqueRandomImages(imagePaths, 1, [target], sampleFn)[0];
-  const isFirstChoice = Math.random() < 0.5;
+function generateCheckTrial(imagePaths, sampleFn) {
+  var target = sampleFn(imagePaths, 1)[0];
+  var otherChoice = getUniqueRandomImages(imagePaths, 1, [target], sampleFn)[0];
+  var isFirstChoice = Math.random() < 0.5;
   return {
     type: "check",
     stimulus: target,
@@ -89,7 +89,7 @@ export function generateCheckTrial(imagePaths, sampleFn) {
  * @param {Function} sampleFn - sampling function(array, count) → array
  * @returns {Object[]} shuffled array of trial descriptors
  */
-export function createTrialSequence(
+function createTrialSequence(
   numRandom,
   numCheck,
   numValidation,
@@ -97,17 +97,28 @@ export function createTrialSequence(
   validationTrials,
   sampleFn
 ) {
-  let trials = [];
+  var trials = [];
 
-  for (let i = 0; i < numRandom; i++) {
+  for (var i = 0; i < numRandom; i++) {
     trials.push(generateRandomTrial(imagePaths, sampleFn));
   }
-  for (let i = 0; i < numCheck; i++) {
+  for (var j = 0; j < numCheck; j++) {
     trials.push(generateCheckTrial(imagePaths, sampleFn));
   }
 
-  const selectedValidation = sampleFn(validationTrials, numValidation);
+  var selectedValidation = sampleFn(validationTrials, numValidation);
   trials = trials.concat(selectedValidation);
 
   return shuffle(trials);
+}
+
+// Export for testing (Node.js / vitest)
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    shuffle: shuffle,
+    getUniqueRandomImages: getUniqueRandomImages,
+    generateRandomTrial: generateRandomTrial,
+    generateCheckTrial: generateCheckTrial,
+    createTrialSequence: createTrialSequence,
+  };
 }

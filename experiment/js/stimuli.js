@@ -2,7 +2,8 @@
  * Stimulus image paths and predefined validation trials.
  */
 
-export const IMAGE_PATHS = [
+/* eslint-disable no-unused-vars */
+var IMAGE_PATHS = [
   "assets/stimuli/rural_day_new_big_church_1.png",
   "assets/stimuli/rural_day_new_big_furniture_1.png",
   "assets/stimuli/rural_day_new_big_house_1.png",
@@ -101,7 +102,7 @@ export const IMAGE_PATHS = [
   "assets/stimuli/urban_eve_young_white_woman_1.png",
 ];
 
-export const VALIDATION_TRIALS = [
+var VALIDATION_TRIALS = [
   {
     type: "validation",
     stimulus: "assets/stimuli/urban_day_young_black_man_1.png",
@@ -403,3 +404,8 @@ export const VALIDATION_TRIALS = [
     choice2: "assets/stimuli/rural_day_new_big_church_1.png",
   },
 ];
+
+// Export for testing (Node.js / vitest)
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { IMAGE_PATHS: IMAGE_PATHS, VALIDATION_TRIALS: VALIDATION_TRIALS };
+}
