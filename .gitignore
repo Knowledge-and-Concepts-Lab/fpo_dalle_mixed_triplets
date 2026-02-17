@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+bun.lock
+
+# R
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+renv/library/
+renv/staging/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data (raw participant data should not be committed)
+*.csv
+!cleaning/tests/**/*.csv
+
+# Build output
+dist/
