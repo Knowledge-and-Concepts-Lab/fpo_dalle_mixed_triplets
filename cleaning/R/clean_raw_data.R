@@ -11,9 +11,9 @@ library(stringr)
 source(file.path(dirname(sys.frame(1)$ofile %||% ""), "functions.R"))
 
 # ── Configuration ──────────────────────────────────────────
-data_dir       <- ""   # directory containing raw CSV exports
-filename_df    <- ""   # output: cleaned triplet data
-filename_level <- ""   # output: stimulus-level mapping
+data_dir       <- "experiment/raw_data/"   # directory containing raw CSV exports
+filename_df    <- "icon_fp_clean.csv"   # output: cleaned triplet data
+filename_level <- "icon_fp_levels.csv"   # output: stimulus-level mapping
 
 # ── Read all CSVs ─────────────────────────────────────────
 setwd(data_dir)

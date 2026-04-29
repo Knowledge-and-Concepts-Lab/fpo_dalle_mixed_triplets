@@ -11,17 +11,17 @@ var CONFIG = {
   PAGE_TITLE: "Triadic Judgment Task",
 
   // ── Response mode ───────────────────────────────────────
-  RESPONSE_MODE: "button",
+  RESPONSE_MODE: "keyboard",
   RESPONSE_KEYS: [
-    "f",
-    "j",
+    "k",
+    "l",
   ],
 
   // ── Trial counts ────────────────────────────────────────
-  N_RANDOM_TRIALS: 550,
-  N_CHECK_TRIALS: 20,
-  N_VALIDATION_TRIALS: 50,
-  N_MAIN_TRIALS: 620,
+  N_RANDOM_TRIALS: 200,
+  N_CHECK_TRIALS: 10,
+  N_VALIDATION_TRIALS: 20,
+  N_MAIN_TRIALS: 230,
 
   // ── Timing (milliseconds) ──────────────────────────────
   MIN_RT_MS: 900,
@@ -35,7 +35,7 @@ var CONFIG = {
 
   // ── Data pipeline ──────────────────────────────────────
   EXPERIMENT_ID: "FywDeGGEu5T3",
-  FILENAME_PREFIX: "fpo_mixed_domain_fullSet",
+  FILENAME_PREFIX: "icon_faceplace_demo",
 
   // ── SONA integration (UW-Madison) ─────────────────────
   SONA_BASE_URL: "https://uwmadison.sona-systems.com/webstudy_credit.aspx",
@@ -53,7 +53,7 @@ var CONFIG = {
   // ── UI text / messages ─────────────────────────────────
   PRELOAD_MESSAGE: "Loading experiment files...",
   WELCOME_TEXT: "Welcome to the experiment. Press any key to begin.",
-  INSTRUCTIONS_HTML: "<p>In each trial of this task, you will see three images: one target item on top, and two choices beneath the target item.</p> <p>For each trial, <strong>please select the item that is most similar to the target item USING ANY CRITERIA.</strong></p> <p>There will be {{N_MAIN_TRIALS}} trials.</p> <p>Click 'Continue' to begin the test.</p>",
+  INSTRUCTIONS_HTML: "<p>In each trial of this task, you will see three images: one target item on top, and two choices beneath the target item.</p> <p>For each trial, <strong>please select the item that is most similar to the target item USING ANY CRITERIA.</strong></p> <p>Press k to select the left item and l to select the right item.</p> <p>There will be {{N_MAIN_TRIALS}} trials.</p> <p>Click 'Continue' to begin the test.</p>",
   CONTINUE_BUTTON_TEXT: "Continue",
   SPEED_FEEDBACK_HTML: "<p><strong>You're going too fast.</strong></p> Please slow down and assess each triplet. <p>Press 'y' to continue.</p>",
   CHECK_FEEDBACK_HTML: "<p><strong>Incorrect!</strong></p> That was an attention check. Please pay attention while completing this task. <p>Press 'y' to continue.</p>",

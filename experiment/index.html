@@ -23,6 +23,12 @@
 // ── Set page title from config ───────────────────────────
 document.title = CONFIG.PAGE_TITLE;
 
+// ── Local vs. hosted detection ───────────────────────────
+// Used to switch between browser-download (local) and jsPsych-Pipe (hosted).
+var isLocal = window.location.hostname === 'localhost' ||
+              window.location.hostname === '127.0.0.1' ||
+              window.location.protocol === 'file:';
+
 // ── Initialize jsPsych ───────────────────────────────────
 var jsPsych = initJsPsych({
     show_progress_bar: true,
@@ -32,11 +38,13 @@ var jsPsych = initJsPsych({
     },
     max_load_time: CONFIG.MAX_LOAD_TIME_MS,
     on_finish: function(data){
-        var completionLink = CONFIG.SONA_BASE_URL +
-            "?experiment_id=" + CONFIG.SONA_EXPERIMENT_ID +
-            "&credit_token=" + CONFIG.SONA_CREDIT_TOKEN +
-            "&survey_code=" + sona_id;
-        window.location.assign(completionLink);
+        if (!isLocal) {
+            var completionLink = CONFIG.SONA_BASE_URL +
+                "?experiment_id=" + CONFIG.SONA_EXPERIMENT_ID +
+                "&credit_token=" + CONFIG.SONA_CREDIT_TOKEN +
+                "&survey_code=" + sona_id;
+            window.location.assign(completionLink);
+        }
     }
 });
 
@@ -50,13 +58,40 @@ var completed_main_trials = 0;
 var useKeyboard = CONFIG.RESPONSE_MODE === "keyboard";
 
 // ── Save data configuration ─────────────────────────────
-var save_data = {
-  type: jsPsychPipe,
-  action: "save",
-  experiment_id: CONFIG.EXPERIMENT_ID,
-  filename: filename,
-  data_string: function() { return jsPsych.data.get().csv(); }
-};
+// Local: trigger a CSV download in the browser.
+// Hosted: send data to jsPsych-Pipe.
+function downloadCsv(csvFilename, csvData) {
+    var blob = new Blob([csvData], { type: 'text/csv' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = csvFilename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+var save_data;
+if (isLocal) {
+    save_data = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: '<p>Saving data...</p>',
+        choices: 'NO_KEYS',
+        trial_duration: 1,
+        on_start: function() {
+            downloadCsv(filename, jsPsych.data.get().csv());
+        }
+    };
+} else {
+    save_data = {
+        type: jsPsychPipe,
+        action: "save",
+        experiment_id: CONFIG.EXPERIMENT_ID,
+        filename: filename,
+        data_string: function() { return jsPsych.data.get().csv(); }
+    };
+}
 
 // ── Preload images ──────────────────────────────────────
 timeline.push({
@@ -116,14 +151,15 @@ if (useKeyboard) {
             return '<div style="text-align:center;">' +
                 '<div><img src="' + target + '" style="max-height:300px;"></div>' +
                 '<div style="display:flex;justify-content:center;gap:40px;margin-top:20px;">' +
-                '<div><img src="' + left + '" style="max-height:200px;"><br><b>' + CONFIG.RESPONSE_KEYS[0] + '</b></div>' +
-                '<div><img src="' + right + '" style="max-height:200px;"><br><b>' + CONFIG.RESPONSE_KEYS[1] + '</b></div>' +
+                '<div><img src="' + left + '" style="max-height:300px;"><br><b>' + CONFIG.RESPONSE_KEYS[0] + '</b></div>' +
+                '<div><img src="' + right + '" style="max-height:300px;"><br><b>' + CONFIG.RESPONSE_KEYS[1] + '</b></div>' +
                 '</div></div>';
         },
         choices: CONFIG.RESPONSE_KEYS,
         on_finish: function(data) {
             var trialType = jsPsych.timelineVariable('type');
             data.trial_type = trialType;
+            data.stimulus = jsPsych.timelineVariable('stimulus');
             // Map key press to choice index (0 = left, 1 = right)
             data.response = CONFIG.RESPONSE_KEYS.indexOf(data.response);
             data.speedy = data.rt < CONFIG.MIN_RT_MS;
