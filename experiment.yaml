@@ -1,0 +1,299 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Experiment configuration
+# ─────────────────────────────────────────────────────────────────────────────
+# Edit this file, then run:
+#   npm run setup
+# to regenerate experiment/js/config.js and experiment/js/stimuli.js.
+# Do NOT edit those generated files directly.
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+# ── Stimuli ──────────────────────────────────────────────────────────────────
+# Path to the stimuli image directory, relative to the project root.
+# All image files found here (.png, .jpg, .jpeg, .gif, .bmp, .webp, .svg)
+# will be added to IMAGE_PATHS automatically.
+stimuli_dir: experiment/assets/stimuli
+
+# Predefined validation triplets for quality control.
+# Paths are relative to experiment/ (the same root as index.html).
+#
+# This field is OPTIONAL. Two modes:
+#   1. Omit validation_trials (or set it to an empty list []) and the setup
+#      script will randomly select n_validation_trials triplets from your
+#      stimuli directory each time you run `npm run setup`.
+#   2. List your triplets explicitly below. You must supply at least
+#      n_validation_trials entries; the experiment samples from them at runtime.
+validation_trials:
+  - stimulus: assets/stimuli/urban_day_young_black_man_1.png
+    choice1:  assets/stimuli/rural_day_new_small_furniture_1.png
+    choice2:  assets/stimuli/urban_eve_old_small_church_1.png
+  - stimulus: assets/stimuli/urban_eve_young_white_man_1.png
+    choice1:  assets/stimuli/urban_day_new_small_church_1.png
+    choice2:  assets/stimuli/urban_day_new_big_furniture_1.png
+  - stimulus: assets/stimuli/rural_day_new_big_vehicle_1.png
+    choice1:  assets/stimuli/urban_eve_old_white_man_1.png
+    choice2:  assets/stimuli/rural_day_old_big_church_1.png
+  - stimulus: assets/stimuli/urban_day_old_big_house_1.png
+    choice1:  assets/stimuli/urban_day_new_big_vehicle_1.png
+    choice2:  assets/stimuli/rural_day_young_black_man_1.png
+  - stimulus: assets/stimuli/rural_eve_old_black_man_1.png
+    choice1:  assets/stimuli/urban_eve_old_small_house_1.png
+    choice2:  assets/stimuli/urban_day_old_big_furniture_1.png
+  - stimulus: assets/stimuli/urban_eve_new_big_furniture_1.png
+    choice1:  assets/stimuli/urban_day_old_black_man_1.png
+    choice2:  assets/stimuli/urban_day_new_big_house_1.png
+  - stimulus: assets/stimuli/urban_eve_old_black_woman_1.png
+    choice1:  assets/stimuli/rural_eve_old_small_house_1.png
+    choice2:  assets/stimuli/rural_day_new_big_furniture_1.png
+  - stimulus: assets/stimuli/urban_eve_old_small_church_1.png
+    choice1:  assets/stimuli/rural_eve_old_small_vehicle_1.png
+    choice2:  assets/stimuli/rural_eve_young_white_man_1.png
+  - stimulus: assets/stimuli/rural_eve_new_small_church_1.png
+    choice1:  assets/stimuli/urban_day_old_white_woman_1.png
+    choice2:  assets/stimuli/rural_day_old_big_vehicle_1.png
+  - stimulus: assets/stimuli/urban_day_new_big_furniture_1.png
+    choice1:  assets/stimuli/rural_eve_new_big_house_1.png
+    choice2:  assets/stimuli/rural_eve_old_black_man_1.png
+  - stimulus: assets/stimuli/urban_eve_old_small_vehicle_1.png
+    choice1:  assets/stimuli/rural_day_old_black_man_1.png
+    choice2:  assets/stimuli/urban_day_new_big_church_1.png
+  - stimulus: assets/stimuli/rural_eve_old_small_furniture_1.png
+    choice1:  assets/stimuli/urban_eve_young_black_woman_1.png
+    choice2:  assets/stimuli/rural_day_new_big_house_1.png
+  - stimulus: assets/stimuli/urban_eve_old_small_furniture_1.png
+    choice1:  assets/stimuli/rural_day_new_small_church_1.png
+    choice2:  assets/stimuli/rural_day_old_black_man_1.png
+  - stimulus: assets/stimuli/rural_day_old_small_house_1.png
+    choice1:  assets/stimuli/urban_day_new_big_furniture_1.png
+    choice2:  assets/stimuli/urban_eve_old_white_woman_1.png
+  - stimulus: assets/stimuli/urban_eve_new_big_house_1.png
+    choice1:  assets/stimuli/rural_eve_young_black_man_1.png
+    choice2:  assets/stimuli/rural_eve_new_big_furniture_1.png
+  - stimulus: assets/stimuli/rural_eve_old_black_woman_1.png
+    choice1:  assets/stimuli/urban_eve_new_big_house_1.png
+    choice2:  assets/stimuli/urban_day_old_big_furniture_1.png
+  - stimulus: assets/stimuli/rural_day_new_small_house_1.png
+    choice1:  assets/stimuli/urban_day_old_black_woman_1.png
+    choice2:  assets/stimuli/rural_eve_new_big_vehicle_1.png
+  - stimulus: assets/stimuli/rural_day_new_big_church_1.png
+    choice1:  assets/stimuli/urban_day_young_white_man_1.png
+    choice2:  assets/stimuli/urban_day_new_small_furniture_1.png
+  - stimulus: assets/stimuli/urban_eve_old_big_church_1.png
+    choice1:  assets/stimuli/rural_day_young_black_man_1.png
+    choice2:  assets/stimuli/urban_eve_new_big_vehicle_1.png
+  - stimulus: assets/stimuli/urban_eve_new_big_house_1.png
+    choice1:  assets/stimuli/urban_eve_old_black_man_1.png
+    choice2:  assets/stimuli/rural_day_old_small_furniture_1.png
+  - stimulus: assets/stimuli/urban_day_new_big_house_1.png
+    choice1:  assets/stimuli/rural_eve_old_black_man_1.png
+    choice2:  assets/stimuli/rural_eve_old_small_furniture_1.png
+  - stimulus: assets/stimuli/urban_eve_young_black_man_1.png
+    choice1:  assets/stimuli/urban_eve_new_big_vehicle_1.png
+    choice2:  assets/stimuli/urban_day_old_big_church_1.png
+  - stimulus: assets/stimuli/urban_day_old_white_man_1.png
+    choice1:  assets/stimuli/urban_eve_new_big_church_1.png
+    choice2:  assets/stimuli/urban_eve_old_big_furniture_1.png
+  - stimulus: assets/stimuli/urban_day_new_small_furniture_1.png
+    choice1:  assets/stimuli/rural_eve_old_black_man_1.png
+    choice2:  assets/stimuli/rural_eve_new_small_house_1.png
+  - stimulus: assets/stimuli/rural_day_young_white_woman_1.png
+    choice1:  assets/stimuli/urban_eve_new_big_house_1.png
+    choice2:  assets/stimuli/rural_eve_old_small_vehicle_1.png
+  - stimulus: assets/stimuli/urban_eve_new_small_church_1.png
+    choice1:  assets/stimuli/urban_eve_new_small_vehicle_1.png
+    choice2:  assets/stimuli/urban_day_old_white_man_1.png
+  - stimulus: assets/stimuli/rural_day_old_small_vehicle_1.png
+    choice1:  assets/stimuli/rural_eve_new_small_church_1.png
+    choice2:  assets/stimuli/urban_eve_young_white_woman_1.png
+  - stimulus: assets/stimuli/urban_eve_old_white_man_1.png
+    choice1:  assets/stimuli/rural_eve_new_big_furniture_1.png
+    choice2:  assets/stimuli/rural_eve_new_big_church_1.png
+  - stimulus: assets/stimuli/urban_day_old_small_house_1.png
+    choice1:  assets/stimuli/urban_eve_old_big_vehicle_1.png
+    choice2:  assets/stimuli/rural_eve_young_black_woman_1.png
+  - stimulus: assets/stimuli/urban_eve_old_small_church_1.png
+    choice1:  assets/stimuli/rural_eve_old_big_vehicle_1.png
+    choice2:  assets/stimuli/urban_day_young_black_man_1.png
+  - stimulus: assets/stimuli/rural_eve_young_black_man_1.png
+    choice1:  assets/stimuli/rural_day_old_small_vehicle_1.png
+    choice2:  assets/stimuli/rural_eve_new_small_church_1.png
+  - stimulus: assets/stimuli/rural_day_new_small_vehicle_1.png
+    choice1:  assets/stimuli/rural_eve_old_small_house_1.png
+    choice2:  assets/stimuli/rural_eve_young_white_woman_1.png
+  - stimulus: assets/stimuli/rural_eve_young_white_man_1.png
+    choice1:  assets/stimuli/rural_eve_old_small_church_1.png
+    choice2:  assets/stimuli/rural_eve_new_big_vehicle_1.png
+  - stimulus: assets/stimuli/urban_eve_old_small_church_1.png
+    choice1:  assets/stimuli/urban_day_old_small_vehicle_1.png
+    choice2:  assets/stimuli/rural_eve_old_black_woman_1.png
+  - stimulus: assets/stimuli/rural_eve_old_white_man_1.png
+    choice1:  assets/stimuli/rural_eve_old_small_church_1.png
+    choice2:  assets/stimuli/rural_day_old_small_vehicle_1.png
+  - stimulus: assets/stimuli/urban_eve_old_big_furniture_1.png
+    choice1:  assets/stimuli/rural_day_young_black_woman_1.png
+    choice2:  assets/stimuli/urban_day_new_big_church_1.png
+  - stimulus: assets/stimuli/urban_eve_old_black_woman_1.png
+    choice1:  assets/stimuli/urban_day_new_big_vehicle_1.png
+    choice2:  assets/stimuli/rural_eve_old_small_house_1.png
+  - stimulus: assets/stimuli/rural_eve_new_big_house_1.png
+    choice1:  assets/stimuli/urban_day_old_white_woman_1.png
+    choice2:  assets/stimuli/urban_eve_new_small_furniture_1.png
+  - stimulus: assets/stimuli/rural_eve_old_black_man_1.png
+    choice1:  assets/stimuli/rural_eve_new_big_furniture_1.png
+    choice2:  assets/stimuli/urban_day_old_big_house_1.png
+  - stimulus: assets/stimuli/urban_eve_old_white_man_1.png
+    choice1:  assets/stimuli/urban_eve_old_small_house_1.png
+    choice2:  assets/stimuli/urban_day_new_big_furniture_1.png
+  - stimulus: assets/stimuli/urban_eve_old_big_vehicle_1.png
+    choice1:  assets/stimuli/urban_eve_old_small_church_1.png
+    choice2:  assets/stimuli/urban_eve_old_white_man_1.png
+  - stimulus: assets/stimuli/urban_eve_old_small_church_1.png
+    choice1:  assets/stimuli/rural_day_new_small_vehicle_1.png
+    choice2:  assets/stimuli/urban_eve_old_white_woman_1.png
+  - stimulus: assets/stimuli/rural_day_young_black_man_1.png
+    choice1:  assets/stimuli/urban_day_new_big_church_1.png
+    choice2:  assets/stimuli/urban_eve_old_small_furniture_1.png
+  - stimulus: assets/stimuli/urban_day_old_small_furniture_1.png
+    choice1:  assets/stimuli/urban_eve_new_big_church_1.png
+    choice2:  assets/stimuli/urban_eve_old_black_man_1.png
+  - stimulus: assets/stimuli/urban_eve_old_black_man_1.png
+    choice1:  assets/stimuli/urban_eve_new_small_church_1.png
+    choice2:  assets/stimuli/urban_eve_new_small_vehicle_1.png
+  - stimulus: assets/stimuli/urban_eve_old_black_woman_1.png
+    choice1:  assets/stimuli/urban_eve_old_small_church_1.png
+    choice2:  assets/stimuli/urban_eve_new_big_furniture_1.png
+  - stimulus: assets/stimuli/rural_eve_young_white_man_1.png
+    choice1:  assets/stimuli/urban_day_old_big_house_1.png
+    choice2:  assets/stimuli/urban_day_new_small_furniture_1.png
+  - stimulus: assets/stimuli/urban_eve_new_small_house_1.png
+    choice1:  assets/stimuli/urban_eve_young_black_woman_1.png
+    choice2:  assets/stimuli/urban_eve_old_small_vehicle_1.png
+  - stimulus: assets/stimuli/urban_eve_new_small_vehicle_1.png
+    choice1:  assets/stimuli/rural_eve_old_small_church_1.png
+    choice2:  assets/stimuli/rural_day_young_black_man_1.png
+  - stimulus: assets/stimuli/urban_eve_young_white_woman_1.png
+    choice1:  assets/stimuli/rural_eve_old_big_vehicle_1.png
+    choice2:  assets/stimuli/rural_day_new_big_church_1.png
+
+
+# ── Page ─────────────────────────────────────────────────────────────────────
+page_title: "Triadic Judgment Task"
+
+
+# ── Response mode ─────────────────────────────────────────────────────────────
+# "button"   — participants click image buttons (default)
+# "keyboard" — participants press keys; set response_keys accordingly
+response_mode: button
+response_keys: [f, j]        # left-choice key, right-choice key
+
+
+# ── Trial counts ──────────────────────────────────────────────────────────────
+# n_main_trials MUST equal n_random_trials + n_check_trials + n_validation_trials.
+n_random_trials: 550
+n_check_trials: 20
+n_validation_trials: 50
+n_main_trials: 620
+
+
+# ── Timing (milliseconds) ─────────────────────────────────────────────────────
+min_rt_ms: 900               # responses faster than this trigger a speed warning
+max_load_time_ms: 120000     # how long to wait for images to preload
+post_instruction_gap_ms: 2000
+post_demographic_gap_ms: 1000
+fixation_duration_ms: 500
+
+
+# ── Fixation ──────────────────────────────────────────────────────────────────
+fixation_symbol: "+"
+
+
+# ── Data pipeline (jsPsych-Pipe) ──────────────────────────────────────────────
+# Create a project at https://pipe.jspsych.org/ to obtain experiment_id.
+experiment_id: "FywDeGGEu5T3"
+filename_prefix: "fpo_mixed_domain_fullSet"
+
+
+# ── SONA integration ──────────────────────────────────────────────────────────
+# Find sona_experiment_id and sona_credit_token in your SONA study's
+# "Automated Credit Granting" settings.
+sona_base_url: "https://uwmadison.sona-systems.com/webstudy_credit.aspx"
+sona_experiment_id: "2226"
+sona_credit_token: "a9411967764b499caa53a0ecccabe0a1"
+
+
+# ── Participant feedback ──────────────────────────────────────────────────────
+# secret_code is shown at the end so participants can confirm completion.
+# It is only displayed when workerId URL parameter length > worker_id_min_length
+# (prevents it showing during local testing with short/absent IDs).
+secret_code: "C119H2OR"
+worker_id_min_length: 7
+
+
+# ── Consent ───────────────────────────────────────────────────────────────────
+consent_image_path: "assets/consent/kc_lab_consent_prolific.png"
+consent_button_text: "Consent & Continue"
+
+
+# ── UI text / messages ────────────────────────────────────────────────────────
+# HTML is supported in all *_html fields.
+# Use {{N_MAIN_TRIALS}} in instructions_html — it is replaced at runtime.
+# Use {{SECRET_CODE}}   in secret_code_html  — it is replaced at runtime.
+
+preload_message: "Loading experiment files..."
+
+welcome_text: "Welcome to the experiment. Press any key to begin."
+
+instructions_html: >-
+  <p>In each trial of this task, you will see three images:
+  one target item on top, and two choices beneath the target item.</p>
+  <p>For each trial, <strong>please select the item that is most
+  similar to the target item USING ANY CRITERIA.</strong></p>
+  <p>There will be {{N_MAIN_TRIALS}} trials.</p>
+  <p>Click 'Continue' to begin the test.</p>
+
+continue_button_text: "Continue"
+
+speed_feedback_html: >-
+  <p><strong>You're going too fast.</strong></p>
+  Please slow down and assess each triplet.
+  <p>Press 'y' to continue.</p>
+
+check_feedback_html: >-
+  <p><strong>Incorrect!</strong></p>
+  That was an attention check. Please pay attention while completing this task.
+  <p>Press 'y' to continue.</p>
+
+feedback_continue_key: "y"
+
+demographic_instructions_html: >-
+  <p>Awesome!</p>
+  <p>For this last part of the experiment, please provide us
+  with information about yourself.</p>
+
+goodbye_html: >-
+  Woohoo! You have finished the experiment.<br>
+  Click the button below to complete the experiment.<br><br>
+
+secret_code_html: "<strong> Here is your secret code: {{SECRET_CODE}} </strong><br>"
+
+complete_button_text: "Complete Experiment"
+
+
+# ── Demographic questions ─────────────────────────────────────────────────────
+race_ethnicity_prompt: "Which categories describe you? Select all that apply to you:"
+race_ethnicity_options:
+  - "American Indian or Alaska Native - For example, Navajo Nation, Mayan"
+  - "Asian - For example, Chinese, Asian Indian"
+  - "Black or African American - For example, Jamaican, Ethiopian"
+  - "Hispanic or Latino - For example, Mexican or Mexican American, Puerto Rican, Salvadoran"
+  - "Middle Eastern or North African - For example, Lebanese, Iranian, Moroccan"
+  - "Native Hawaiian or Other Pacific Islander - For example, Somoan, Fijian"
+  - "White - For example, German, Irish"
+  - "Some other race, ethnicity, or origin"
+  - "I prefer not to answer"
+
+age_prompt: "Please enter your age (in years):"
+age_columns: 6
+
+gender_prompt: "How do you currently describe your gender identity? Please specify."
+gender_columns: 60

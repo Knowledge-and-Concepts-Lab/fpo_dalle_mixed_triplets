@@ -1,0 +1,205 @@
+{"0": {
+    "doc": "Data Cleaning Reference",
+    "title": "Data Cleaning Reference",
+    "content": "The cleaning/R/ directory contains two scripts: . | Script | Purpose | . | clean_raw_data.R | Main pipeline — processes raw jsPsych-Pipe CSV exports into a model-ready dataset | . | standardize_legacy.R | Converts older triadic comparison datasets from various column formats into the standard 2025 format | . Both scripts depend on the helper functions defined in functions.R. ",
+    "url": "/data-cleaning.html",
+    
+    "relUrl": "/data-cleaning.html"
+  },"1": {
+    "doc": "Data Cleaning Reference",
+    "title": "Output format",
+    "content": "Both scripts produce the same column structure. Understanding this layout helps interpret what each function does. Cleaned data file . | Column | Type | Description | . | head / Center | numeric / string | The target (top) stimulus. head is a zero-based integer index; Center is the filename string. | . | winner / Answer | numeric / string | The stimulus the participant chose as most similar. | . | loser | numeric / string | The stimulus the participant did not choose. | . | Left | string | The stimulus shown on the left side of the screen. | . | Right | string | The stimulus shown on the right side of the screen. | . | worker_id / p_id | string | Participant identifier (sourced from the ?workerId= URL parameter). | . | rt / RT | numeric | Reaction time in milliseconds. | . | sampleAlg | string | How the trial was generated: \"random\", \"check\", or \"validation\". See assign_sample_alg. | . | sampleSet | string | Whether this trial is in the \"train\" or \"test\" split for embedding models. NA for check trials. See assign_sample_sets. | . The numeric columns head, winner, and loser are zero-based integer indices into an alphabetically-sorted list of all unique stimulus names. This list is written to a separate levels file alongside the cleaned data. Levels file . Maps each integer index back to its stimulus filename, with one row per unique stimulus: . | Column | Description | . | file | Stimulus filename without path or extension (e.g. rural_day_old_big_house_1) | . | path | Full relative path with extension (e.g. resources/rural_day_old_big_house_1.png) | . ",
+    "url": "/data-cleaning.html#output-format",
+    
+    "relUrl": "/data-cleaning.html#output-format"
+  },"2": {
+    "doc": "Data Cleaning Reference",
+    "title": "clean_raw_data.R — main pipeline",
+    "content": "This script reads all CSV files exported from jsPsych-Pipe, applies the full cleaning pipeline, and writes two output files. Configuration . Before running, set three variables near the top of the script: . data_dir &lt;- \"path/to/raw/csvs\" # folder containing downloaded CSV files filename_df &lt;- \"cleaned_data.csv\" # output: cleaned triplet data filename_level &lt;- \"levels.csv\" # output: stimulus index mapping . Running . Rscript cleaning/R/clean_raw_data.R . What it does, step by step . | Reads all CSVs in data_dir and row-binds them into a single data frame. | Filters for main trials — keeps only trial_type == \"image-button-response\" rows and drops trial_index == 3 (which captures early non-trial screens). | Removes incomplete participants via filter_incomplete (default: fewer than 510 trials). | Removes fast responders via filter_fast_responders (default: log mean RT below log(1000 ms)). | Cleans stimulus filenames — strips resources/ path prefixes, quotes, brackets, and .png extensions from the stimulus and choices columns, then renames stimulus to head. | Splits choices into winner and loser — uses the response column (0 = left choice selected, 1 = right) to determine which option was chosen (winner) and which was not (loser). | Labels trial types via assign_sample_alg. | Removes attention-check failures via filter_failed_catch (default: more than 20% wrong). | Encodes stimuli as integers — creates zero-based numeric columns (head, winner, loser) from an alphabetically-sorted factor over all unique stimulus names. | Assigns train/test splits via assign_sample_sets (default: 80% train, 20% test). | Writes outputs — the cleaned data file and the levels mapping file. | . ",
+    "url": "/data-cleaning.html#clean_raw_datar--main-pipeline",
+    
+    "relUrl": "/data-cleaning.html#clean_raw_datar--main-pipeline"
+  },"3": {
+    "doc": "Data Cleaning Reference",
+    "title": "standardize_legacy.R — legacy dataset converter",
+    "content": "Use this script when you have triadic comparison data from older or external sources that use different column names. It detects and maps a wide range of legacy column names to the standard format. Usage . source(\"cleaning/R/standardize_legacy.R\") result &lt;- clean_triadic_comparisons(\"your_dataset.csv\") . The function writes two files and returns their paths: . result$data_file # e.g. \"your_dataset_v2025.csv\" result$levels_file # e.g. \"your_dataset_v2025_levels.csv\" . clean_triadic_comparisons(input_file) . Reads a single CSV and standardises it to the 2025 column format. Column name detection — the function matches input columns case-insensitively and ignoring punctuation, so Participant.ID, participant_id, and PARTICIPANTID all resolve to the same field. Recognised column names by role: . | Output column | Recognised input names | . | p_id | sessionID, session_ID, puid, Participant.ID, worker_id, sub_id, pid | . | Center | Center, Target | . | Left | Left, Option1 | . | Right | Right, Option2 | . | winner | winner, primary | . | loser | loser, alternate | . | sampleSet | sampleSet, Alg.Label, TrnTest | . | sampleAlg | sampleAlg, AlgSample | . sampleAlg value recoding: . | Input value | Output value | . | \"Random\" | \"random\" | . | \"Test\" | \"validation\" | . | \"check\" | \"check\" | . | \"uncertainty\" | \"uncertainty\" | . Fallback behaviour when columns are missing: . | If no participant ID column is found, synthetic IDs (P1, P2, …) are assigned. | If no sampleSet column is found, trials are randomly split 90% train / 10% test (seed 2025). | If no sampleAlg column is found, the column is filled with NA. | Any of head, winner, loser, Answer that cannot be found are derived from the relationships among Center, Left, Right, and Answer where possible. | . ",
+    "url": "/data-cleaning.html#standardize_legacyr--legacy-dataset-converter",
+    
+    "relUrl": "/data-cleaning.html#standardize_legacyr--legacy-dataset-converter"
+  },"4": {
+    "doc": "Data Cleaning Reference",
+    "title": "Helper functions (functions.R)",
+    "content": "Source this file to use the functions in your own scripts or in the R console: . source(\"cleaning/R/functions.R\") . process_choices . process_choices(choices, extension = \".png\") . Strips formatting artifacts from raw jsPsych choice strings. jsPsych records the choices array as a JSON-like string (e.g. [\"resources/image_a.png\",\"resources/image_b.png\"]); this function removes the brackets, quotes, resources/ path prefix, and file extension so only the bare stimulus name remains. Arguments . | Argument | Default | Description | . | choices | — | Character vector of raw choice strings from the jsPsych CSV | . | extension | \".png\" | File extension to strip, including the leading dot | . Returns a character vector of cleaned stimulus names. Example . process_choices('[\"resources/image_a.png\",\"resources/image_b.png\"]') # =&gt; \"image_a\",\"image_b\" process_choices(\"[resources/photo.JPEG]\", extension = \".JPEG\") # =&gt; \"photo\" . assign_sample_alg . assign_sample_alg(d) . Adds a sampleAlg column that labels each trial by how it was generated: . | Value | Condition | . | \"check\" | The target (head) is identical to either the winner or the loser — i.e. the target reappears as one of the two choices (attention check). | . | \"validation\" | The validation column is TRUE — trial was drawn from the predefined validation set. | . | \"random\" | All other trials — three independently sampled images. | . Arguments . | Argument | Description | . | d | Data frame with columns head, winner, loser, and validation | . Returns the input data frame with a new sampleAlg column appended. filter_failed_catch . filter_failed_catch(d, max_prop_wrong = 0.2) . Removes participants who failed too many attention-check trials. A catch trial is “wrong” when the participant did not select the repeated target (i.e. head == loser). Arguments . | Argument | Default | Description | . | d | — | Data frame with worker_id, head, winner, and loser columns. Should contain only catch trials, or the full dataset (non-catch trials are counted as correct). | . | max_prop_wrong | 0.2 | Participants whose proportion of wrong catch trials exceeds this value are removed | . Returns the input data frame with failing participants’ rows removed. Example . # Remove participants who got more than 30% of catch trials wrong f &lt;- filter_failed_catch(f, max_prop_wrong = 0.30) . filter_incomplete . filter_incomplete(d, min_trials = 510) . Removes participants who did not complete enough trials. Also removes any rows where worker_id is NA. Arguments . | Argument | Default | Description | . | d | — | Data frame with a worker_id column | . | min_trials | 510 | Participants with fewer total rows than this are removed | . Returns the input data frame with incomplete participants’ rows removed. Choosing min_trials — the default of 510 is roughly 82% of the 620-trial design. Adjust this based on how much partial data you are willing to accept. filter_fast_responders . filter_fast_responders(d, min_mean_rt_ms = 1000) . Removes participants whose mean reaction time is suspiciously fast, which may indicate random clicking. The comparison is made on the log scale: the participant’s mean log-RT must be at least log(min_mean_rt_ms). Using log-RT rather than raw RT makes the threshold robust to occasional very slow trials inflating the mean. Arguments . | Argument | Default | Description | . | d | — | Data frame with worker_id and rt columns. rt should be in milliseconds. | . | min_mean_rt_ms | 1000 | Minimum acceptable mean RT in milliseconds (comparison is done on log scale) | . Returns the input data frame with fast responders’ rows removed. Example . # Require a mean RT of at least 800 ms f &lt;- filter_fast_responders(f, min_mean_rt_ms = 800) . assign_sample_sets . assign_sample_sets(df, test_prop = 0.2, seed = 42) . Randomly assigns each non-check trial to either the \"train\" or \"test\" split. Check trials receive NA — they are excluded from embedding model training and evaluation. The split is performed per participant, so each participant contributes roughly the same proportion of trials to each set. Arguments . | Argument | Default | Description | . | df | — | Data frame with worker_id and sampleAlg columns | . | test_prop | 0.2 | Proportion of non-check trials to assign to the test set | . | seed | 42 | Random seed for reproducibility | . Returns the input data frame with a new sampleSet column: \"train\", \"test\", or NA (for check trials). ",
+    "url": "/data-cleaning.html#helper-functions-functionsr",
+    
+    "relUrl": "/data-cleaning.html#helper-functions-functionsr"
+  },"5": {
+    "doc": "Data Cleaning Reference",
+    "title": "Running the tests",
+    "content": "The test suite in cleaning/tests/testthat/test_cleaning_functions.R covers all five helper functions in functions.R. Rscript cleaning/tests/run_tests.R . Or from within an R session: . testthat::test_dir(\"cleaning/tests/testthat\") . ",
+    "url": "/data-cleaning.html#running-the-tests",
+    
+    "relUrl": "/data-cleaning.html#running-the-tests"
+  },"6": {
+    "doc": "How to Set Up a New Experiment",
+    "title": "How to Set Up and Run a New Experiment",
+    "content": "This guide walks through every step needed to adapt this template for a new triadic comparison experiment — from preparing stimuli to collecting and cleaning data. ",
+    "url": "/how-to-new-experiment.html#how-to-set-up-and-run-a-new-experiment",
+    
+    "relUrl": "/how-to-new-experiment.html#how-to-set-up-and-run-a-new-experiment"
+  },"7": {
+    "doc": "How to Set Up a New Experiment",
+    "title": "Overview",
+    "content": "Each trial shows participants three images: one target (top) and two choices (bottom). Participants click (or press a key) to select which choice is most similar to the target. The experiment is built on jsPsych v7.3.4 and uses jsPsych-Pipe to save data server-side. The workflow for setting up a new experiment is: . | Edit experiment.yaml — the single source of truth for all settings. | Run npm run setup — auto-generates experiment/js/config.js and experiment/js/stimuli.js. | Test locally, then deploy. | . Never edit config.js or stimuli.js directly — they are overwritten every time you run npm run setup. ",
+    "url": "/how-to-new-experiment.html#overview",
+    
+    "relUrl": "/how-to-new-experiment.html#overview"
+  },"8": {
+    "doc": "How to Set Up a New Experiment",
+    "title": "File responsibilities",
+    "content": "| File | Role | . | experiment.yaml | Edit this. All researcher-facing settings in one place. | . | scripts/generate_experiment.js | Generator script — run via npm run setup. | . | experiment/js/config.js | Auto-generated — do not edit. | . | experiment/js/stimuli.js | Auto-generated — do not edit. | . | experiment/assets/stimuli/ | Your stimulus image files. | . | experiment/assets/consent/ | Your consent form image. | . | experiment/index.html | Experiment structure — only edit if you need to change the demographic questions or overall flow. | . ",
+    "url": "/how-to-new-experiment.html#file-responsibilities",
+    
+    "relUrl": "/how-to-new-experiment.html#file-responsibilities"
+  },"9": {
+    "doc": "How to Set Up a New Experiment",
+    "title": "Step 1: Install dependencies",
+    "content": "If you have not already done so: . npm install . This installs js-yaml (used by the generator) and vitest (used for tests). ",
+    "url": "/how-to-new-experiment.html#step-1-install-dependencies",
+    
+    "relUrl": "/how-to-new-experiment.html#step-1-install-dependencies"
+  },"10": {
+    "doc": "How to Set Up a New Experiment",
+    "title": "Step 2: Prepare your stimuli",
+    "content": "2a. Add your images . Copy all stimulus images into experiment/assets/stimuli/. Supported formats: .png, .jpg, .jpeg, .gif, .bmp, .webp, .svg. You need at least 3 images to run the experiment. The generator scans this directory automatically and sorts files alphabetically — you do not need to list them anywhere. 2b. Update stimuli_dir in experiment.yaml . stimuli_dir: experiment/assets/stimuli . This is already the default. Change it only if you store your images elsewhere (path is relative to the project root). 2c. Define your validation trials . Validation trials are predefined triplets used for quality control (e.g., cross-participant consistency checks). The validation_trials field in experiment.yaml is optional: . Option 1 — auto-generate (default for new experiments) . Omit validation_trials entirely, or set it to an empty list. The setup script will randomly select n_validation_trials triplets from your stimuli directory each time you run npm run setup: . # validation_trials: ← omit this, or write: validation_trials: [] . New triplets are drawn every time npm run setup runs, so re-running the script will produce a different random set. Option 2 — specify explicitly . List the triplets you want. Paths are relative to experiment/ (the same root as index.html). You must supply at least n_validation_trials entries; if you provide more, the experiment samples from them at runtime: . validation_trials: - stimulus: assets/stimuli/your_target.png choice1: assets/stimuli/option_a.png choice2: assets/stimuli/option_b.png # ... add at least n_validation_trials entries . ",
+    "url": "/how-to-new-experiment.html#step-2-prepare-your-stimuli",
+    
+    "relUrl": "/how-to-new-experiment.html#step-2-prepare-your-stimuli"
+  },"11": {
+    "doc": "How to Set Up a New Experiment",
+    "title": "Step 3: Configure the experiment",
+    "content": "All settings live in experiment.yaml. The sections below cover the ones you are most likely to change. Data pipeline (required) . Create a project at pipe.jspsych.org to get your experiment ID. experiment_id: \"YOUR_PIPE_EXPERIMENT_ID\" filename_prefix: \"your_study_name\" . Each participant’s data is saved as a CSV named &lt;filename_prefix&gt;_&lt;random_code&gt;.csv. SONA integration (required for credit granting) . Find these values in your SONA study’s “Automated Credit Granting” settings. sona_base_url: \"https://uwmadison.sona-systems.com/webstudy_credit.aspx\" sona_experiment_id: \"YOUR_SONA_STUDY_ID\" sona_credit_token: \"YOUR_CREDIT_TOKEN\" . On completion, participants are automatically redirected to the SONA credit URL. Their SONA ID is read from the ?workerId= URL parameter — make sure your SONA study appends it to the experiment URL. Trial counts . n_random_trials: 550 # 3 random images — no correct answer n_check_trials: 20 # attention checks — target repeats as one choice n_validation_trials: 50 # drawn from your validation_trials list n_main_trials: 620 # MUST equal the sum of the three above . The generator will error if n_main_trials does not equal the sum of the other three. Response mode . response_mode: button # \"button\" (default) or \"keyboard\" response_keys: [f, j] # left/right keys — only used in keyboard mode . Timing . min_rt_ms: 900 # responses faster than this trigger a speed warning fixation_duration_ms: 500 # fixation cross duration before each trial post_instruction_gap_ms: 2000 post_demographic_gap_ms: 1000 max_load_time_ms: 120000 # how long to wait for images to preload . Consent form . consent_image_path: \"assets/consent/your_consent_form.png\" consent_button_text: \"Consent &amp; Continue\" . UI text . All participant-facing text is in experiment.yaml. Two fields support runtime placeholders: . | instructions_html — use `` and it will be replaced with the actual trial count. | secret_code_html — use `` and it will be replaced with the participant’s completion code. | . The secret code is only shown when the workerId URL parameter is longer than worker_id_min_length characters (default: 7). This prevents it appearing during local testing. ",
+    "url": "/how-to-new-experiment.html#step-3-configure-the-experiment",
+    
+    "relUrl": "/how-to-new-experiment.html#step-3-configure-the-experiment"
+  },"12": {
+    "doc": "How to Set Up a New Experiment",
+    "title": "Step 4: Generate the experiment files",
+    "content": "After editing experiment.yaml, run: . npm run setup . This overwrites experiment/js/config.js and experiment/js/stimuli.js. The script validates your settings before writing and will print a clear error message if something is wrong (mismatched trial counts, missing validation trials, stimuli directory not found, etc.). ",
+    "url": "/how-to-new-experiment.html#step-4-generate-the-experiment-files",
+    
+    "relUrl": "/how-to-new-experiment.html#step-4-generate-the-experiment-files"
+  },"13": {
+    "doc": "How to Set Up a New Experiment",
+    "title": "Step 5: Test locally",
+    "content": "The experiment must be served over HTTP — opening index.html as a file:// URL will not work. # Python (no install needed) cd experiment &amp;&amp; python -m http.server 8000 # Node.js npx serve experiment . Open http://localhost:8000 in your browser. Testing tips: . | Add a fake worker ID to skip SONA: http://localhost:8000?workerId=test1234 | For a shorter test session, temporarily reduce n_random_trials in experiment.yaml (and adjust n_main_trials to match), then re-run npm run setup. | Run the unit test suite to verify utility functions are correct: | . npm test . ",
+    "url": "/how-to-new-experiment.html#step-5-test-locally",
+    
+    "relUrl": "/how-to-new-experiment.html#step-5-test-locally"
+  },"14": {
+    "doc": "How to Set Up a New Experiment",
+    "title": "Step 6: Deploy",
+    "content": "The experiment is a static site — any static file host works. Common options: . | GitHub Pages — push the experiment/ folder to a gh-pages branch, or configure Pages to serve from a subdirectory. | Netlify / Vercel — drag and drop the experiment/ folder or connect the repository. | University web server — upload the experiment/ folder via SFTP. | . Ensure the host uses HTTPS, as jsPsych-Pipe requires it. After deploying, give SONA the URL with the %SURVEY_CODE% placeholder appended as ?workerId=%SURVEY_CODE% so SONA passes each participant’s ID into the experiment automatically. ",
+    "url": "/how-to-new-experiment.html#step-6-deploy",
+    
+    "relUrl": "/how-to-new-experiment.html#step-6-deploy"
+  },"15": {
+    "doc": "How to Set Up a New Experiment",
+    "title": "Step 7: Collect and clean data",
+    "content": "Downloading data . Log in to your jsPsych-Pipe project to download individual CSV files, or use the Pipe API to batch-download them. Cleaning data . The cleaning/ directory contains an R pipeline for cleaning raw triplet data: . | Install R dependencies: install.packages(c(\"dplyr\", \"data.table\", \"stringr\", \"readr\", \"tidyr\")) . | Edit cleaning/R/clean_raw_data.R and set data_dir, filename_df, and filename_level to point to your downloaded data. | Run: Rscript cleaning/R/clean_raw_data.R . | . ",
+    "url": "/how-to-new-experiment.html#step-7-collect-and-clean-data",
+    
+    "relUrl": "/how-to-new-experiment.html#step-7-collect-and-clean-data"
+  },"16": {
+    "doc": "How to Set Up a New Experiment",
+    "title": "Quick reference: experiment.yaml settings",
+    "content": "| Setting | Default | Notes | . | stimuli_dir | experiment/assets/stimuli | Path to images, relative to project root | . | validation_trials | (list) | Must have ≥ n_validation_trials entries | . | page_title | \"Triadic Judgment Task\" | Browser tab title | . | response_mode | \"button\" | \"button\" or \"keyboard\" | . | response_keys | [f, j] | Left/right keys for keyboard mode | . | n_random_trials | 550 |   | . | n_check_trials | 20 |   | . | n_validation_trials | 50 |   | . | n_main_trials | 620 | Must equal sum of above three | . | min_rt_ms | 900 | Faster responses trigger speed warning | . | fixation_duration_ms | 500 |   | . | post_instruction_gap_ms | 2000 |   | . | post_demographic_gap_ms | 1000 |   | . | max_load_time_ms | 120000 |   | . | fixation_symbol | \"+\" |   | . | experiment_id | — | From jsPsych-Pipe dashboard | . | filename_prefix | — | Prefix for saved CSV files | . | sona_base_url | UW-Madison URL | Change for other institutions | . | sona_experiment_id | — | From SONA study settings | . | sona_credit_token | — | From SONA automated credit granting | . | secret_code | — | Shown to participants on completion | . | worker_id_min_length | 7 | Min URL param length to show secret code | . | consent_image_path | — | Path to consent form image | . | consent_button_text | \"Consent &amp; Continue\" |   | . ",
+    "url": "/how-to-new-experiment.html#quick-reference-experimentyaml-settings",
+    
+    "relUrl": "/how-to-new-experiment.html#quick-reference-experimentyaml-settings"
+  },"17": {
+    "doc": "How to Set Up a New Experiment",
+    "title": "How to Set Up a New Experiment",
+    "content": " ",
+    "url": "/how-to-new-experiment.html",
+    
+    "relUrl": "/how-to-new-experiment.html"
+  },"18": {
+    "doc": "Home",
+    "title": "Triplet Experiment Template",
+    "content": "A ready-to-use template for running triadic comparison experiments (triplet tasks) online using jsPsych v7, with an R-based data-cleaning pipeline. Participants view three images — one target on top, two choices below — and select the choice most similar to the target. The template includes attention checks, validation trials, progress tracking, and automated data export. ",
+    "url": "/#triplet-experiment-template",
+    
+    "relUrl": "/#triplet-experiment-template"
+  },"19": {
+    "doc": "Home",
+    "title": "Quick start",
+    "content": "# 1. Install dependencies npm install # 2. Edit the master config # — set your stimuli directory, credentials, trial counts, and UI text open experiment.yaml # 3. Generate experiment/js/config.js and experiment/js/stimuli.js npm run setup # 4. Serve and preview locally cd experiment &amp;&amp; python -m http.server 8000 . Then open http://localhost:8000. ",
+    "url": "/#quick-start",
+    
+    "relUrl": "/#quick-start"
+  },"20": {
+    "doc": "Home",
+    "title": "Documentation",
+    "content": "| Guide | Description | . | Installation &amp; Prerequisites | Software and dependencies needed to use this template | . | How to Set Up a New Experiment | Step-by-step walkthrough — stimuli, config, deployment, data cleaning | . | Data Cleaning Reference | All R cleaning functions, the full pipeline, and the legacy converter | . ",
+    "url": "/#documentation",
+    
+    "relUrl": "/#documentation"
+  },"21": {
+    "doc": "Home",
+    "title": "Repository layout",
+    "content": "├── experiment/ # Web experiment (HTML + JS) │ ├── index.html # Main experiment page │ ├── js/ │ │ ├── config.js # Auto-generated — do not edit │ │ ├── stimuli.js # Auto-generated — do not edit │ │ └── utils.js # Trial-generation utilities │ └── assets/ │ ├── consent/ # Consent form image │ └── stimuli/ # Stimulus images ├── experiment.yaml # ← Edit this to configure your experiment ├── scripts/ │ └── generate_experiment.js # Reads experiment.yaml, writes config.js + stimuli.js ├── cleaning/ # R data-cleaning pipeline │ └── R/ │ ├── clean_raw_data.R │ └── functions.R ├── tests/ # JavaScript unit tests (vitest) └── docs/ # This documentation site . ",
+    "url": "/#repository-layout",
+    
+    "relUrl": "/#repository-layout"
+  },"22": {
+    "doc": "Home",
+    "title": "Home",
+    "content": " ",
+    "url": "/",
+    
+    "relUrl": "/"
+  },"23": {
+    "doc": "Installation & Prerequisites",
+    "title": "Installation &amp; Prerequisites",
+    "content": "This project has three independent components, each with its own dependencies. Install only what you need for the tasks you plan to do. | Component | What it does | Requires | . | Experiment setup | Generates config.js and stimuli.js from experiment.yaml | Node.js | . | Experiment preview | Serves the experiment locally for testing | Node.js or Python | . | JavaScript tests | Runs the utils.js / config.js / stimuli.js unit tests | Node.js | . | Data cleaning | Cleans raw participant data from jsPsych-Pipe | R | . | R tests | Runs the cleaning pipeline unit tests | R | . | Docs preview | Builds and serves this documentation site locally | Ruby | . ",
+    "url": "/installation.html#installation--prerequisites",
+    
+    "relUrl": "/installation.html#installation--prerequisites"
+  },"24": {
+    "doc": "Installation & Prerequisites",
+    "title": "Node.js",
+    "content": "Required for: experiment setup (npm run setup), JS tests (npm test), and serving the experiment locally (npx serve). Install . | Go to nodejs.org and download the LTS installer for Windows. | Run the installer, accepting all defaults. Ensure “Add to PATH” is checked. | Open a new terminal and verify: | . node --version # should print v20 or higher npm --version # should print 10 or higher . Project setup . From the project root, install the project’s Node dependencies once: . npm install . This installs js-yaml (used by the generator script) and vitest (used by the test suite). ",
+    "url": "/installation.html#nodejs",
+    
+    "relUrl": "/installation.html#nodejs"
+  },"25": {
+    "doc": "Installation & Prerequisites",
+    "title": "R",
+    "content": "Required for: data cleaning (cleaning/R/clean_raw_data.R) and R tests. Install R . | Go to cran.r-project.org and click Download R for Windows. | Click base, then download and run the installer, accepting all defaults. | Verify in a new terminal: | . Rscript --version # should print R scripting front-end version 4.x.x . Optional: RStudio . RStudio is a popular IDE for R. It is not required but makes running and editing R scripts easier. Install R packages . Open an R console (or run Rscript in your terminal) and install the required packages: . install.packages(c(\"dplyr\", \"data.table\", \"stringr\", \"readr\", \"tidyr\", \"testthat\")) . This only needs to be done once. Package installation may take a few minutes. ",
+    "url": "/installation.html#r",
+    
+    "relUrl": "/installation.html#r"
+  },"26": {
+    "doc": "Installation & Prerequisites",
+    "title": "Ruby",
+    "content": "Required for: previewing the documentation site locally. Not needed to run the experiment, clean data, or run tests — only install this if you want to work on the documentation. Install . | Go to rubyinstaller.org/downloads and download the latest Ruby+Devkit x64 installer (the recommended version is highlighted). | Run the installer, accepting all defaults. Leave “Add Ruby executables to your PATH” checked. | At the final screen, leave the checkbox ticked to run ridk install. In the window that opens, type 3 and press Enter to install MSYS2 and MINGW development tools. Wait for it to complete, then close the window. | Open a new terminal and verify: | . ruby --version # should print ruby 3.x.x bundle --version # should print Bundler version 2.x.x . Install documentation dependencies . From the docs/ directory, install the Ruby gems once: . cd docs bundle install . Preview the docs locally . bundle exec jekyll serve . Then open http://localhost:4000. Jekyll will watch for file changes and rebuild automatically. ",
+    "url": "/installation.html#ruby",
+    
+    "relUrl": "/installation.html#ruby"
+  },"27": {
+    "doc": "Installation & Prerequisites",
+    "title": "Python (optional)",
+    "content": "Python is an alternative way to serve the experiment locally for testing. It is not required if you have Node.js installed (you can use npx serve instead). Check if Python is already installed . python --version . Python 3.x is pre-installed on many Windows systems. If the command is not found, download the installer from python.org and ensure “Add Python to PATH” is checked during installation. Serve the experiment with Python . cd experiment python -m http.server 8000 . Then open http://localhost:8000. ",
+    "url": "/installation.html#python-optional",
+    
+    "relUrl": "/installation.html#python-optional"
+  },"28": {
+    "doc": "Installation & Prerequisites",
+    "title": "Installation & Prerequisites",
+    "content": " ",
+    "url": "/installation.html",
+    
+    "relUrl": "/installation.html"
+  }
+}
