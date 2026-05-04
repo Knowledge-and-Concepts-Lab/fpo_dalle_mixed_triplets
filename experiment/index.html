@@ -34,7 +34,7 @@ var jsPsych = initJsPsych({
     show_progress_bar: true,
     auto_update_progress_bar: false,
     on_data_update: function() {
-        jsPsych.data.addProperties({worker_id: urlvar.workerId});
+        jsPsych.data.addProperties({worker_id: urlvar.workerId || (isLocal ? secret_code : null)});
     },
     max_load_time: CONFIG.MAX_LOAD_TIME_MS,
     on_finish: function(data){
@@ -158,7 +158,7 @@ if (useKeyboard) {
         choices: CONFIG.RESPONSE_KEYS,
         on_finish: function(data) {
             var trialType = jsPsych.timelineVariable('type');
-            data.trial_type = trialType;
+            data.trial_category = trialType;
             data.stimulus = jsPsych.timelineVariable('stimulus');
             // Map key press to choice index (0 = left, 1 = right)
             data.response = CONFIG.RESPONSE_KEYS.indexOf(data.response);
@@ -187,7 +187,7 @@ if (useKeyboard) {
         button_html: '<button class="jspsych-btn"><img src=%choice%></button>',
         on_finish: function(data) {
             var trialType = jsPsych.timelineVariable('type');
-            data.trial_type = trialType;
+            data.trial_category = trialType;
             data.speedy = data.rt < CONFIG.MIN_RT_MS;
             data.choices = [jsPsych.timelineVariable('choice1'), jsPsych.timelineVariable('choice2')];
 
@@ -228,14 +228,14 @@ timeline.push({
             timeline: [checkFeedback],
             conditional_function: function() {
                 var lastTrial = jsPsych.data.get().last(1).values()[0];
-                return lastTrial.trial_type === 'check' && !lastTrial.correct;
+                return lastTrial.trial_category === 'check' && !lastTrial.correct;
             }
         },
         {
             timeline: [speedFeedback],
             conditional_function: function() {
                 var lastTrial = jsPsych.data.get().last(1).values()[0];
-                return lastTrial.rt < CONFIG.MIN_RT_MS && lastTrial.trial_type !== 'check';
+                return lastTrial.rt < CONFIG.MIN_RT_MS && lastTrial.trial_category !== 'check';
             }
         }
     ],
