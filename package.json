@@ -4,10 +4,12 @@
   "private": true,
   "description": "Template for triadic comparison experiments using jsPsych",
   "scripts": {
+    "setup": "node scripts/generate_experiment.js",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "devDependencies": {
+    "js-yaml": "^4.1.0",
     "vitest": "^3.0.0"
   },
   "license": "MIT"

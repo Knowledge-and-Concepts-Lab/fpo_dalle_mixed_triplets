@@ -8,12 +8,20 @@ library(data.table)
 library(readr)
 library(stringr)
 
-source(file.path(dirname(sys.frame(1)$ofile %||% ""), "functions.R"))
+script_dir <- tryCatch(
+  dirname(normalizePath(sys.frame(1)$ofile)),
+  error = function(e) {
+    args <- commandArgs(trailingOnly = FALSE)
+    file_flag <- grep("^--file=", args, value = TRUE)
+    if (length(file_flag)) dirname(normalizePath(sub("^--file=", "", file_flag))) else "."
+  }
+)
+source(file.path(script_dir, "functions.R"))
 
 # ── Configuration ──────────────────────────────────────────
-data_dir       <- ""   # directory containing raw CSV exports
-filename_df    <- ""   # output: cleaned triplet data
-filename_level <- ""   # output: stimulus-level mapping
+data_dir       <- "experiment/raw_data/"   # directory containing raw CSV exports
+filename_df    <- "icon_fp_clean.csv"   # output: cleaned triplet data
+filename_level <- "icon_fp_levels.csv"   # output: stimulus-level mapping
 
 # ── Read all CSVs ─────────────────────────────────────────
 setwd(data_dir)
@@ -21,21 +29,22 @@ file_list <- list.files(pattern = "\\.csv$")
 f_full <- rbindlist(lapply(file_list, read_csv, show_col_types = FALSE), fill = TRUE)
 
 # ── Filter for trials of interest ─────────────────────────
+# trial_category is set by the experiment for all response modes (keyboard + button).
 f <- f_full %>%
-  filter(trial_type == "image-button-response", trial_index != 3) %>%
-  dplyr::select(worker_id, trial_index, rt, stimulus, choices, response, validation)
+  filter(trial_category %in% c("random", "check", "validation")) %>%
+  dplyr::select(worker_id, trial_index, rt, stimulus, choices, response, trial_category)
 
 # ── Remove incomplete participants ────────────────────────
-f <- filter_incomplete(f, min_trials = 510)
+f <- filter_incomplete(f, min_trials = 200)
 
 # ── Remove fast responders ────────────────────────────────
-f <- filter_fast_responders(f, min_mean_rt_ms = 1000)
+f <- filter_fast_responders(f, min_mean_rt_ms = 200)
 
 # ── Clean file names (adjust extension as needed) ─────────
 f <- f %>%
   mutate(
-    choices = str_replace_all(choices, c("\\[|\\]" = "", "resources/" = "", '"' = "", ".png" = "")),
-    stimulus = str_replace_all(stimulus, c("resources/" = "", ".png" = ""))
+    choices  = str_replace_all(choices,  c("\\[|\\]" = "", "assets/stimuli/" = "", "resources/" = "", '"' = "", "\\.png" = "")),
+    stimulus = str_replace_all(stimulus, c("assets/stimuli/" = "", "resources/" = "", "\\.png" = ""))
   ) %>%
   rename(head = stimulus)
 
@@ -49,7 +58,7 @@ f <- f %>%
     right  = choices_split[, 2]
   )
 
-f <- assign_sample_alg(f)
+f <- f %>% rename(sampleAlg = trial_category)
 
 # ── Filter participants failing catch trials ──────────────
 f <- filter_failed_catch(f, max_prop_wrong = 0.2)

@@ -1,0 +1,26 @@
+title: Triplet Experiment Template
+description: >-
+  Template for triadic comparison experiments (triplet tasks) using jsPsych,
+  with automated setup and an R data-cleaning pipeline.
+
+remote_theme: just-the-docs/just-the-docs
+
+plugins:
+  - jekyll-remote-theme
+
+# ── Just the Docs settings ───────────────────────────────────────────────────
+search_enabled: true
+heading_anchors: true
+
+color_scheme: light
+
+# Footer links
+footer_content: >-
+  Knowledge &amp; Concepts Lab &mdash;
+  <a href="https://github.com/Knowledge-and-Concepts-Lab/triplet_experiment_template">
+  View on GitHub</a>
+
+# Exclude files that aren't documentation pages
+exclude:
+  - Gemfile
+  - Gemfile.lock
